@@ -2,8 +2,9 @@ package main
 
 import (
 	"container/list"
-	"errors"
+	"context"
 	"fmt"
+	"time"
 )
 
 type TestScenario interface {
@@ -42,6 +43,7 @@ func (sm *ScenarioMgt) AddScope(name string) {
 	sm.scenarioList = list.New()
 }
 
+/*
 func (sm *ScenarioMgt) AddScenario(name string, timeLen uint32, execFn func(sce *Scenario)) error {
 	if sm.state != true {
 		return errors.New("scenario list not inited!")
@@ -89,6 +91,7 @@ func showTestResults(mg *ScenarioMgt) {
 		}
 	}
 }
+
 func execTest(mg *ScenarioMgt) error {
 	//record start_time end_time
 	var sc *Scenario
@@ -137,10 +140,63 @@ func SimuTest(exit chan struct{}) {
 	fmt.Println("All test cases finished, Notify the Main process to exit.")
 	close(exit) //TODO not sent in the debuging stage
 }
+*/
+
+func TC_E1INTERFACE_E1_SETUP_NORMAL() {
+	fmt.Println("testing TC_E1INTERFACE_E1-SETUP-NORMAL")
+}
+
+func TC_E1INTERFACE_E1_SETUP_FAILURE() {
+	fmt.Println("testing TC_E1INTERFACE_E1-SETUP-FAILURE")
+}
+
+func TC_E1INTERFACE_E1_SETUP_RESET() {
+	fmt.Println("testing TC_E1INTERFACE_E1-SETUP-RESET")
+}
+
+func TC_BEARERCONTEXT_BEARER_SETUP_NORMAL() {
+	fmt.Println("testing TC_BEARERCONTEXT_BEARER-SETUP-NORMAL")
+}
+
+func TC_BEARERCONTEXT_BEARER_SETUP_FAILURE() {
+	fmt.Println("testing TC_BEARERCONTEXT_BEARER-SETUP-FAILURE")
+}
+
+func TC_BEARERCONTEXT_BEARER_RELEASE() {
+	fmt.Println("testing TC_BEARERCONTEXT_BEARER-RELEASE")
+}
+
+var TC_TABLE map[string]interface{}
+
+func init() {
+	TC_TABLE = make(map[string]interface{})
+	TC_TABLE["TC_E1INTERFACE_E1_SETUP_NORMAL"] = TC_E1INTERFACE_E1_SETUP_NORMAL
+	TC_TABLE["TC_E1INTERFACE_E1_SETUP_FAILURE"] = TC_E1INTERFACE_E1_SETUP_FAILURE
+	TC_TABLE["TC_E1INTERFACE_E1_SETUP_RESET"] = TC_E1INTERFACE_E1_SETUP_RESET
+	TC_TABLE["TC_BEARERCONTEXT_BEARER_SETUP_NORMAL"] = TC_BEARERCONTEXT_BEARER_SETUP_NORMAL
+	TC_TABLE["TC_BEARERCONTEXT_BEARER_SETUP_FAILURE"] = TC_BEARERCONTEXT_BEARER_SETUP_FAILURE
+	TC_TABLE["TC_BEARERCONTEXT_BEARER_RELEASE"] = TC_BEARERCONTEXT_BEARER_RELEASE
+
+}
+
+func prepareTest() {
+	fmt.Println("Prepare testing")
+}
 
 func main() {
+	parent := context.Background()
+	waitDBReady()
+	prepareTest()
+	//for testing
+	addJobToDB(parent)
 	//get job from etcd
+	getJobFromDB(parent)
 	//save job to local
 	//loop all registed test case, if match jobs in etcd, run the case
+	go runJob(parent)
 
+	for {
+		time.Sleep(time.Second)
+		fmt.Println("In SimuCtl main...")
+	}
 }

@@ -20,6 +20,9 @@ func init() {
 
 func createEtcdClient() error {
 	var err error
+
+	getDBIp()
+
 	etcdClient, err = clientv3.New(clientv3.Config{
 		Endpoints:   []string{myEtcdIP + myEtcdPort},
 		DialTimeout: 60 * time.Second,
@@ -30,14 +33,26 @@ func createEtcdClient() error {
 	return err
 }
 
-func getEtcdIp() {
+func waitDBReady() {
+	for {
+		time.Sleep(time.Second)
+		if err := createEtcdClient(); err == nil {
+			fmt.Println("ETCD client ready")
+			break
+		}
+	}
+}
+func getDBIp() {
 	for {
 		time.Sleep(time.Second)
 
 		ns, err := net.LookupHost("myetcd")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Err: %s", err.Error())
-
+			//for local test
+			myEtcdIP = "127.0.0.1"
+			return
+			//end for local test
 		} else {
 
 			for _, n := range ns {
@@ -84,7 +99,7 @@ func handleEtcdUpdate(event *clientv3.Event) {
 	fmt.Println(eventType, keys)
 }
 
-func sendEtcd(ctx context.Context, key string, data []byte) {
+func sendToDB(ctx context.Context, key string, data []byte) {
 
 	for {
 		select {
@@ -108,18 +123,19 @@ func sendEtcd(ctx context.Context, key string, data []byte) {
 				}
 				cancleFunc()
 				fmt.Printf("PutResponse: %v, err: %v", putResp, err)
+				return
 			}
 		}
 	}
 }
 
-func getEtcd(ctx context.Context, key string, data []byte) {
+func getFromDB(ctx context.Context, key string) []byte {
 
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Println("Main ctx done")
-			return
+			return nil
 		default:
 			{
 				kv := clientv3.NewKV(etcdClient)
@@ -129,7 +145,9 @@ func getEtcd(ctx context.Context, key string, data []byte) {
 					panic(err)
 				}
 				cancleFunc()
-				fmt.Println("%v", getResp.Kvs)
+				fmt.Println("Get from DB %v", getResp.Kvs)
+				data := getResp.Kvs[0].Value
+				return data
 			}
 		}
 	}
