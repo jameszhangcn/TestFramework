@@ -32,6 +32,8 @@ func main() {
 		fmt.Println("Main stopped!!")
 	}()
 	common.WaitDBReady()
+	common.WaitNatsReady()
+
 	prepareTest()
 	//for testing
 	common.AddJobToDB(parent)
@@ -43,6 +45,6 @@ func main() {
 
 	for {
 		time.Sleep(time.Second)
-		fmt.Println("In SimuCtl main...")
+		fmt.Println("In main loop ...")
 	}
 }

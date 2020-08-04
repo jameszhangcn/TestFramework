@@ -165,6 +165,7 @@ func PubScenario() {
 		fmt.Println(err)
 	}
 	sendToDB(context.Background(), pathJobScenario, value)
+	go PubScenarioStart()
 }
 
 func WaitAllFinish() {
@@ -196,4 +197,15 @@ WAIT:
 			}
 		}
 	}
+}
+
+func PubScenarioStart() {
+	time.Sleep(time.Second)
+	value, err := json.Marshal(GlobalScenarioMgmt)
+	if err != nil {
+		fmt.Println(err)
+	}
+	PubEvent("SIMUCUCP-S", value)
+	PubEvent("SIMUCIM-S", value)
+	PubEvent("SIMUBCC-S", value)
 }

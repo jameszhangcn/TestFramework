@@ -19,7 +19,9 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.14.6 // indirect
 	github.com/jonboulle/clockwork v0.2.0 // indirect
 	github.com/mattbaird/jsonpatch v0.0.0-20171005235357-81af80346b1a
+	github.com/nats-io/nats.go v1.10.0
 	github.com/prometheus/client_golang v1.7.1 // indirect
+	github.com/prometheus/common v0.10.0
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/spf13/cobra v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
