@@ -10,7 +10,7 @@ func TC_BEARERCONTEXT_BEARER_SETUP_NORMAL(sco, sce string) {
 	common.GetScenarioMgt(sco, sce)
 	common.SetScenarioTO(5)
 	common.SetUp()
-	//common.AddProc("UP-E1-RESET-REQ", "RESPONSE", "", "FALSE")
+	//common.AddProc("UP-E1-RESET-REQ", "RESPONSE", "", "FALSE", nil)
 	//publish the Test scenario to DB
 	common.PubScenario()
 
@@ -26,7 +26,7 @@ func TC_BEARERCONTEXT_BEARER_SETUP_FAILURE(sco, sce string) {
 	common.GetScenarioMgt(sco, sce)
 	common.SetScenarioTO(5)
 	common.SetUp()
-	//common.AddProc("UP-E1-RESET-REQ", "RESPONSE", "", "FALSE")
+	//common.AddProc("UP-E1-RESET-REQ", "RESPONSE", "", "FALSE", nil)
 	//publish the Test scenario to DB
 	common.PubScenario()
 
@@ -42,7 +42,7 @@ func TC_BEARERCONTEXT_BEARER_RELEASE(sco, sce string) {
 	common.GetScenarioMgt(sco, sce)
 	common.SetScenarioTO(5)
 	common.SetUp()
-	//common.AddProc("UP-E1-RESET-REQ", "RESPONSE", "", "FALSE")
+	//common.AddProc("UP-E1-RESET-REQ", "RESPONSE", "", "FALSE", nil)
 	//publish the Test scenario to DB
 	common.PubScenario()
 

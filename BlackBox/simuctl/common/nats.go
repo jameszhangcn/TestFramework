@@ -152,12 +152,15 @@ func init() {
 
 func cucpHandler(msg *nats.Msg) {
 	fmt.Println("nats cucpHandler received: ", msg)
+	GlobalDataQueue.Push(msg.Data, 1)
 }
 func cimHandler(msg *nats.Msg) {
 	fmt.Println("nats cimHandler received: ", msg)
+	GlobalDataQueue.Push(msg.Data, 1)
 }
 func bccHandler(msg *nats.Msg) {
 	fmt.Println("nats bccHandler received: ", msg)
+	GlobalDataQueue.Push(msg.Data, 1)
 }
 
 func createNatsCli(natsAddr string) (cli *Client, e error) {

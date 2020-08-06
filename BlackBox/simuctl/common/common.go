@@ -1,10 +1,10 @@
 package common
 
 import (
-	"container/list"
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -15,16 +15,22 @@ type ExptProc struct {
 	RespPara  string `json:"respPara"` //this is the filename of parameter json
 	NeedCheck string `json:"needCheck"`
 	State     string `json:"state"`
+	execFunc  func()
 }
 
 type ScenarioMgt struct {
-	JobID        int
-	ScopeName    string
-	ScenarioName string
-	ProcList     *list.List
-	TimeOut      int    //seconds
-	State        string //INIT, SUCCESS, TIMEOUT
-	WillRun      string //RUN, SKIP
+	JobID        int        `json:"jobID"`
+	ScopeName    string     `json:"scope"`
+	ScenarioName string     `json:"scenario`
+	TimeOut      int        //seconds
+	State        string     //INIT, SUCCESS, TIMEOUT
+	WillRun      string     //RUN, SKIP
+	Procs        []ExptProc `json:"procs`
+}
+
+type NatsReport struct {
+	MsgName string `json:"msgname"`
+	Data    []byte `json:"data"`
 }
 
 var GlobalScenarioMgmt *ScenarioMgt
@@ -33,7 +39,7 @@ var TC_TABLE map[string]interface{}
 
 var pathJobScenario string
 
-func AddProc(msg, behr, rsp, is_check string) {
+func AddProc(msg, behr, rsp, is_check string, execFunc func()) {
 
 	if !IsWillRun() {
 		//the case will not be added
@@ -45,9 +51,10 @@ func AddProc(msg, behr, rsp, is_check string) {
 		RespPara:  rsp,
 		NeedCheck: is_check,
 		State:     "INIT",
+		execFunc:  execFunc,
 	}
 
-	GlobalScenarioMgmt.ProcList.PushBack(exptProc)
+	GlobalScenarioMgmt.Procs = append(GlobalScenarioMgmt.Procs, *exptProc)
 
 	if rsp != "" {
 		//push the response para to DB
@@ -65,7 +72,7 @@ func GetScenarioMgt(sco, sce string) {
 	GlobalScenarioMgmt = new(ScenarioMgt)
 	GlobalScenarioMgmt.ScopeName = sco
 	GlobalScenarioMgmt.ScenarioName = sce
-	GlobalScenarioMgmt.ProcList = list.New()
+	GlobalScenarioMgmt.Procs = make([]ExptProc, 0)
 	GlobalScenarioMgmt.TimeOut = 60 //second
 	GlobalScenarioMgmt.JobID = jobInstance.JobID
 	GlobalScenarioMgmt.WillRun = "RUN"
@@ -76,12 +83,9 @@ func GetScenarioMgt(sco, sce string) {
 }
 
 func isAllProcFinished() bool {
-	var proc *ExptProc
-	for item := GlobalScenarioMgmt.ProcList.Front(); nil != item; item = item.Next() {
-		fmt.Println(item.Value)
-		proc = item.Value.(*ExptProc)
-		fmt.Println("The expt proc:", proc)
-		fmt.Println("The expt state:", proc.State)
+	for i := 0; i < len(GlobalScenarioMgmt.Procs); i++ {
+		proc := GlobalScenarioMgmt.Procs[i]
+		fmt.Println("The expt proc:", i, proc)
 		if proc.State == "INIT" {
 			return false
 		}
@@ -89,20 +93,30 @@ func isAllProcFinished() bool {
 	return true
 }
 
+func SetProcState(msg, state string) bool {
+	for i := 0; i < len(GlobalScenarioMgmt.Procs); i++ {
+		proc := &GlobalScenarioMgmt.Procs[i]
+		if proc.MsgType == msg {
+			proc.State = state
+			return true
+		}
+	}
+	return false
+}
+
 func SetUp() {
 	time.Sleep(3 * time.Second)
 }
 
 func CleanUp() {
+	GlobalDataQueue.Empty(5)
 	time.Sleep(3 * time.Second)
 }
 
 func ShowScenResult() {
-	var proc *ExptProc
 	fmt.Println("The result for ", GlobalScenarioMgmt.ScenarioName, GlobalScenarioMgmt.State)
-	for item := GlobalScenarioMgmt.ProcList.Front(); nil != item; item = item.Next() {
-		fmt.Println(item.Value)
-		proc = item.Value.(*ExptProc)
+	for i := 0; i < len(GlobalScenarioMgmt.Procs); i++ {
+		proc := GlobalScenarioMgmt.Procs[i]
 		fmt.Println("The proc:", proc, proc.State)
 	}
 }
@@ -139,6 +153,10 @@ func InitScenResult() {
 	}
 }
 
+func GetProcDBKey(para string) string {
+	return (strconv.Itoa(GlobalScenarioMgmt.JobID) + "/" + GlobalScenarioMgmt.ScopeName + "/" + GlobalScenarioMgmt.ScenarioName + "/" + para)
+}
+
 func SetScenarioTO(to int) {
 	GlobalScenarioMgmt.TimeOut = to
 }
@@ -164,8 +182,20 @@ func PubScenario() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	sendToDB(context.Background(), pathJobScenario, value)
+	SendToDB(context.Background(), pathJobScenario, value)
 	go PubScenarioStart()
+}
+
+func CallbackAllProc() {
+	for i := 0; i < len(GlobalScenarioMgmt.Procs); i++ {
+		proc := GlobalScenarioMgmt.Procs[i]
+		fmt.Println("The proc:", proc)
+		if proc.State == "INIT" {
+			if proc.execFunc != nil {
+				proc.execFunc()
+			}
+		}
+	}
 }
 
 func WaitAllFinish() {
@@ -178,7 +208,7 @@ func WaitAllFinish() {
 		ch <- "timeout"
 	}()
 
-	tickTimer := time.NewTicker(2 * time.Second)
+	tickTimer := time.NewTicker(1 * time.Second)
 
 WAIT:
 	for {
@@ -189,6 +219,9 @@ WAIT:
 			break WAIT
 		case <-tickTimer.C:
 			{
+				//call the proc func
+				CallbackAllProc()
+
 				if isAllProcFinished() {
 					fmt.Println("all proc done for scenario ", GlobalScenarioMgmt.ScenarioName, "Finished")
 					break WAIT

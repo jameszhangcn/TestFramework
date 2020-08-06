@@ -99,7 +99,7 @@ func handleEtcdUpdate(event *clientv3.Event) {
 	fmt.Println(eventType, keys)
 }
 
-func sendToDB(ctx context.Context, key string, data []byte) {
+func SendToDB(ctx context.Context, key string, data []byte) {
 
 	for {
 		select {

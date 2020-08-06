@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"simuctl/mail"
+	"time"
 )
 
 type Scenario struct {
@@ -34,11 +36,11 @@ func AddJobToDB(ctx context.Context) {
 
 	job := new(Job)
 	job.JobID = 10001
-	job.Scopes = make([]Scope, 1)
+	job.Scopes = make([]Scope, 0)
 
 	scope = new(Scope)
 	scope.Name = "E1INTERFACE"
-	scope.Scenarios = make([]Scenario, 1)
+	scope.Scenarios = make([]Scenario, 0)
 
 	scenario = new(Scenario)
 	scenario.Name = "E1_SETUP_NORMAL"
@@ -56,7 +58,7 @@ func AddJobToDB(ctx context.Context) {
 
 	scope = new(Scope)
 	scope.Name = "BEARERCONTEXT"
-	scope.Scenarios = make([]Scenario, 1)
+	scope.Scenarios = make([]Scenario, 0)
 
 	scenario = new(Scenario)
 	scenario.Name = "BEARER_SETUP_NORMAL"
@@ -76,7 +78,7 @@ func AddJobToDB(ctx context.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	sendToDB(ctx, pathEtcdWaitingJob, value)
+	SendToDB(ctx, pathEtcdWaitingJob, value)
 }
 
 func GetJobFromDB(ctx context.Context) {
@@ -137,4 +139,22 @@ func ShowJobResult() {
 			}
 		}
 	}
+}
+
+func PublishEmail() {
+	result := make([]string, 0)
+	for _, scope := range jobInstance.Scopes {
+		fmt.Println("Scope: ", scope.Name)
+		for _, scenario := range scope.Scenarios {
+			if scenario.State != "INIT" {
+				fmt.Printf("| %-30s| %-20s|\n", scenario.Name, scenario.State)
+				ret := fmt.Sprintf("| %-30s| %-20s|\n", scenario.Name, scenario.State)
+				result = append(result, ret)
+			}
+		}
+	}
+
+	subject := "BlackBoxTesting: " + time.Now().String()
+	mail.SendMultiLineMail(subject, result)
+
 }
