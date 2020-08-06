@@ -184,7 +184,7 @@ func handleUpE1SetupReq(msgType string, data *C.UPE1SetupReq_st) {
 	//at the save time, save the result and resp content to DB
 	if proc.NeedCheck == "TRUE" {
 
-		cuUpName := C.GoString((*_Ctype_char)(data.cuUpName))
+		cuUpName := "TEST-CUUP" //C.GoString((*_Ctype_char)(data.cuUpName))
 		rep := &E1SetupREP{
 			CuUpName: cuUpName,
 		}
