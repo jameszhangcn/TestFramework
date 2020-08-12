@@ -6,8 +6,8 @@ metadata:
     app: myetcd
 spec:
   ports:
-  - port: 22389
-    targetPort: 2389
+  - port: 2379
+    targetPort: 2379
     name: etcd-server
   clusterIP: None
   selector:
@@ -33,7 +33,7 @@ spec:
       - name: myetcd
         image: k8s.gcr.io/etcd:3.4.3-0
         ports:
-        - containerPort: 2389
+        - containerPort: 2379
           name: etcd-server
         volumeMounts:
         - name: etcdstore

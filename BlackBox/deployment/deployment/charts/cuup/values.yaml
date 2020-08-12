@@ -9,8 +9,10 @@ global:
     # Kafka and etcd service fqdn. set the appropriate namespace 
     # in the value when use_release_ns is set to true.
     # Comment the lines in case if use_release_ns=false
-    kafka_svc_fqdn: "kafka-svc.mtcil.svc.cluster.local:9092"
-    etcd_svc_fqdn: "etcd.mtcil.svc.cluster.local:2379"
+    #kafka_svc_fqdn: "kafka-svc.mtcil.svc.cluster.local:9092"
+    kafka_svc_fqdn: "kafka.kafka.svc.cluster.local:9092"
+    #etcd_svc_fqdn: "etcd.mtcil.svc.cluster.local:2379"
+    etcd_svc_fqdn: "myetcd.default.svc.cluster.local:2379"
   
   cuup:
     spNodeSelector:

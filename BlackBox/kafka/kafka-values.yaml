@@ -1,0 +1,10 @@
+replicas: 3
+persistence:
+  storageClass: local-storage
+  size: 5Gi
+zookeeper:
+  persistence:
+    enabled: true
+    storageClass: local-storage
+    size: 5Gi
+  replicaCount: 3
