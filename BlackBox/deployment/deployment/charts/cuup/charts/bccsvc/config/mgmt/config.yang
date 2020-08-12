@@ -1,0 +1,224 @@
+module mavenir-{{.Values.nf.nfId}}-config {
+    namespace "urn:mavenir:ns:yang:cuup:gnb-dpcm";
+    prefix dpcmVsConfig;
+    import tailf-common { prefix tailf; }
+
+
+    revision "2020-05-08" {
+        description "Initial revision.";
+    }
+    
+        container config {
+            tailf:callpoint configUpdate {
+                tailf:transaction-hook subtree;
+            }
+        
+            list unix {
+                key "name";
+                max-elements 20;
+                leaf name {
+                        type string;
+                    }
+
+                leaf nodaemon {
+                    type boolean;
+                    mandatory true;
+                }
+                leaf log {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                leaf full-coredump {
+                    type boolean;
+                    mandatory true;
+                }
+                leaf cli-listen {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                leaf interactive {
+                    type boolean;
+                    mandatory true;
+                }
+            }
+            list api-trace {
+                key "name";
+                max-elements 10;
+
+                leaf name {
+                        type string;
+                    }
+
+                leaf on {
+                    type boolean;
+                    mandatory true;
+                }
+            }
+            list socksvr {
+                key "name";
+                max-elements 10;
+
+                leaf name {
+                        type string;
+                    }
+
+                leaf default {
+                    type boolean;
+                    mandatory true;
+                }
+            }
+            list cpu {
+                key "name";
+                max-elements 10;
+
+                leaf name {
+                    type string;
+                }
+
+                leaf main-core {
+                    type uint32;
+                    mandatory true;
+                }
+                leaf corelist-workers {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+            }
+            list buffers {
+                key "name";
+                max-elements 1;
+                
+                leaf name {
+                    type string;
+                }
+                
+                leaf buffers-per-numa {
+                    type uint32;
+                    mandatory true;
+                }
+            }
+            list dpdk {
+                key "id";
+                max-elements 10;
+
+                leaf id {
+                    type uint32;
+                }
+
+                list "dev-default" {
+                    key "name";
+                    max-elements 10;
+
+                    leaf name {
+                        type string;
+                    }
+
+                    leaf num-rx-queues {
+                        type uint32;
+                        mandatory true;
+                    }
+                    leaf num-tx-queues {
+                        type uint32;
+                        mandatory true;
+                    }
+                }
+                list "dev" {
+                    key "name";
+                    max-elements 10;
+
+                    leaf name {
+                        type string {
+                            length "0..50";
+                        }
+                        mandatory true;
+                    }
+		    
+                    leaf pci {
+                        type string {
+                            length "0..50";
+                        }
+                        mandatory true;
+                    }
+                }
+                leaf uio-driver {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                
+                leaf vdev {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+            }
+            list plugins {
+                key "name";
+                max-elements 10;
+
+                leaf name {
+                        type string;
+                    }
+
+                leaf path {
+                    type string {
+                        length "0..100";
+                    }
+                    mandatory true;
+                }
+            }
+            list tap-inject {
+                key "name";
+                max-elements 10;
+
+                leaf name {
+                        type string;
+                    }
+
+                leaf disable {
+                    type boolean;
+                    mandatory true;
+                }
+            }
+            list custom {
+                key "name";
+                max-elements 10;
+
+                leaf name {
+                        type string;
+                    }
+
+                leaf vppctl {
+                    type string {
+                        length "0..150";
+                    }
+                    mandatory true;
+                }
+            }
+            list ip {
+                key "name";
+                max-elements 10;
+
+                leaf name {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                leaf ip {
+                    type string {
+                        length "0..128";
+                    }
+                    mandatory true;
+                }
+           }
+        }
+}

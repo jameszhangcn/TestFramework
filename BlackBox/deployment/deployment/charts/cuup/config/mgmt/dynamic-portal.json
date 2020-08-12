@@ -1,0 +1,14 @@
+{
+	"config": {
+		"remoteServer": [
+			{
+				"name": "CU-CP",
+				"serviceProto": "SCTP",
+				"fqdn": "1.1.1.1",
+				"transport": "TCP",
+				"port": 38462,
+				"grpcOption": "withinsecure"
+			}
+		]
+	}
+}

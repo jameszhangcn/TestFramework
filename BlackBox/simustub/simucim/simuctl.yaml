@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simuctl
+  namespace: default
+spec:
+  containers:
+  - name: simuctl
+    image: simuctl:v1
+    command:
+      - sleep
+      - "30"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always

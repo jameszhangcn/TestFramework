@@ -1,0 +1,30 @@
+{
+	"config": {
+		"gnbCuUpId": "1",
+	"gnbCuUpNamePre": 1,
+	"gnbCuUpName": "UP-0",
+	        "cnSupported": "EPC",
+		"localSctpEndpoint":{
+			"localIp": ["172.16.33.16"],
+			"localPort": 38462
+		
+		},
+	"upE1SetupMaxRetryNum": 2,
+	"AssoEstabTimerExpiry": 15,
+	"upE1SetupTimerExpiry": 20,
+	"supportedPlmns": [
+		{
+                "name": "plmn1",
+			"plmnId": {
+		  "mcc": "311",
+		  "mnc": "48"
+
+				}
+
+
+		}
+	],
+	"gnbCuUpCapacityPre": 1,
+	"gnbCuUpCapacity": 0	
+	}
+}

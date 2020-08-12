@@ -1,0 +1,47 @@
+module gnb_dpcm_vs_config {
+	yang-version 1.1;
+
+    namespace "urn:mavenir:ns:yang:cuup:dpcmcfg";
+    prefix "gnbDpcmVsConfig";
+
+    revision 2020-05-08 {
+        description "Initial revision.";
+    }
+
+    grouping dpcmVsConfigGrp {
+        
+        container dpsScale {
+            leaf serviceName {
+                type string {
+                    length "0..50";
+                }
+                mandatory false;
+                description "Human readable name of the gNB-CU-UP";
+            }
+        
+            leaf scaleInTimer {
+                type uint32{
+                    range "0..2400";
+                }
+                mandatory true;
+                description "The timer length for dps scale in";
+            }   
+
+            leaf maxBunchOfReleaseReq {
+                type uint32{
+                    range "0..500"; 
+                }
+                mandatory true;
+                description "The maximum retry number for CU-UP E1 Setup request";
+            }    
+        }
+        
+        container pdcpconfig_up {
+            leaf enable_nr_up {
+                type boolean;
+                mandatory true;
+                description "Whether enable NRUP";
+            } 
+        }		
+    }
+}

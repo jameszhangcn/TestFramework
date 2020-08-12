@@ -1,0 +1,112 @@
+######## CNF TEMPLATE DEFINITIONS ###########
+global:
+  hub: GLOBALHUBURL
+  tag: R.1.0.1.0
+  mtcil:
+    use_release_ns: true
+    create_ns: false
+    
+    # Kafka and etcd service fqdn. set the appropriate namespace 
+    # in the value when use_release_ns is set to true.
+    # Comment the lines in case if use_release_ns=false
+    kafka_svc_fqdn: "kafka-svc.mtcil.svc.cluster.local:9092"
+    etcd_svc_fqdn: "etcd.mtcil.svc.cluster.local:2379"
+  
+  cuup:
+    spNodeSelector:
+      enabled: true
+      labelKey: upsp
+      labelValue: true  
+    dpNodeSelector:
+      enabled: true
+      labelKey: updp
+      labelValue: true  
+    e1_macvlan:
+      metaspec:
+        ext_name: macvlan-e1      
+      config:
+        master: "enp0s10"
+        subnet: "172.31.22.0/24"
+        rangeStart: "172.31.22.53"
+        rangeEnd: "172.31.22.53"
+        routes_dst: "172.31.22.0/24"
+        gateway: "172.31.22.1"   
+    f1u_sriov: 
+      metaspec:
+        ext_name: sriov-dpdk-f1
+        annotations:
+          k8s.v1.cni.cncf.io/resourceName: intel.com/sriov_neta
+    n3_sriov: 
+      metaspec:
+        ext_name: sriov-dpdk-n3
+        annotations:
+          k8s.v1.cni.cncf.io/resourceName: intel.com/sriov_neta
+    x2u_sriov: 
+      metaspec:
+        ext_name: sriov-dpdk-x2
+        annotations:
+          k8s.v1.cni.cncf.io/resourceName: intel.com/sriov_netb    
+    dp_resources:
+      dpdk_resource_a: "intel.com/sriov_neta"
+      dpdk_resource_b: "intel.com/sriov_netb"
+      limits:
+        cpu: "4"
+        memory: "40Gi"
+        hugepages_2Mi: "8Gi"
+        dpdk_resource_a: '2'
+        dpdk_resource_b: '1'        
+      requests:
+        cpu: "4.0"
+        memory: "35Gi"
+        dpdk_resource_a: '2'
+        dpdk_resource_b: '1'        
+
+    n3_addr: "172.31.3.52"
+    f1u_addr: "172.31.21.52"
+    x2u_addr: "172.16.36.150"
+    
+nf:
+  #namespace: <VendorId>-<MTCILId>-<NFClass>-<NFType>-<NFId>
+  #e.g: mvnr-mtcil1-appln-cuup-cuup1
+  version: v1
+  vendorId: mvnr
+  mtcilId: mtcil1
+  nfClass: appln
+  nfType: cuup
+  nfId: cuup1
+
+  cnftpl_configmap:
+    mgmt_cfg:
+      create: true
+      metaspec:
+        annotations:
+          configMgmt: enabled
+    static_cfg:
+      create: true
+      metaspec: {}
+    env_cfg:
+      create: false
+      metaspec: {}
+  cnftpl_secret:
+      create: false
+      metaspec: {}
+      secretspec: {}
+  cnftpl_namespaces:
+      create: true
+      metaspec:
+        labels: 
+          istio-injection: disabled
+  cnftpl_dashboard:
+      create: false
+      metaspec: {}
+  cnftpl_eventdef:
+      create: false
+      metaspec: {}
+  cnftpl_alertsdef:
+      create: false
+      metaspec: {}
+  cnftpl_metricsdef:
+      create: false
+      metaspec: {}
+
+###########################################

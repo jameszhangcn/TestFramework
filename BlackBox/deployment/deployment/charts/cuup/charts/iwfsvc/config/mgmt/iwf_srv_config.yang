@@ -1,0 +1,97 @@
+module mavenir-{{.Values.nf.nfId}}-storeware {
+    namespace "urn:mavenir:ns:yang:{{.Values.nf.nfId}}:storeware";
+	prefix {{.Values.nf.nfId}}-storeware;
+    import tailf-common { prefix tailf; }
+
+    revision "2020-01-13" {
+        description "Initial revision.";
+    }
+    container config {
+        tailf:callpoint configUpdate {
+            tailf:transaction-hook subtree;
+        }
+        list dbSetting {
+            key "name";
+            max-elements 2;
+
+            leaf name {
+                type enumeration {
+                    enum config_db;
+                    enum session_db;
+                }
+                mandatory true;
+                description "Database Setting Name";
+            }
+            leaf dbType {
+                type enumeration {
+                    enum COUCHBASE;
+                }
+                mandatory true;
+                description "Database Type";
+            }
+            leaf serverName {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+                description "server fqdn or ip";
+            }
+            leaf port {
+                type uint32{
+                    range "0 .. 10000";
+                }
+                mandatory true;
+                description "port number";
+            }
+            leaf userName {
+                type string {
+                    length "0..100";
+                }
+                mandatory true;
+                description "user name";
+            }
+            leaf password {
+                type string {
+                    length "0..200";
+                }
+                mandatory true;
+                description "password";
+            }
+            leaf initClientCount {
+                type uint32{
+                    range "1 .. 100";
+                }
+                mandatory true;
+                description "Initial client instance count in service pool";
+            }
+            leaf maxClientCount {
+                type uint32{
+                    range "1 .. 1000";
+                }
+                mandatory true;
+                description "Maximum client instance count in service pool";
+            }
+            leaf lifeTime {
+                type uint32{
+                    range "1 .. 1000000";
+                }
+                mandatory true;
+                description "If client idle over lifeTime, will be expired. Unit: ms";
+            }
+            leaf defaultBucket {
+                type string {
+                    length "0..200";
+                }
+                mandatory false;
+                description "Default Bucket, only used for session_db";
+            }
+            leaf defaultTable {
+                type string {
+                    length "0..200";
+                }
+                mandatory false;
+                description "Default Table, only used for session_db";
+            }
+        }
+    }
+}

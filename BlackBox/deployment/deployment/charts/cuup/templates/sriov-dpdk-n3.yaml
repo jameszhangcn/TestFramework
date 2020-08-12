@@ -1,0 +1,10 @@
+{{- $cnfHdr := (dict "" "") -}}
+{{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+{{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" .Values.global.cuup.n3_sriov.metaspec) }}
+spec:
+  config: '{
+    "type": "sriov"
+  }'

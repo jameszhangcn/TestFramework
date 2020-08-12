@@ -1,0 +1,28 @@
+{
+    "events": {
+        "SCTP_LINK_DOWN": {
+            "eventType":"COMMUNICATION",
+            "domain": "fault",
+            "perceivedSeverity": "MAJOR",
+            "probableCause": "CU-CP is down or SCTP link to CU-CP is down.",
+            "specificProblem": "Peer node failure or SCTP link failure to peer node.",
+            "rootCauseIndicator": "None",
+            "trendIndication": "Yes",
+            "correlatedNotifications": "SCTP_LINK_UP",
+            "additionalText": "",
+            "proposedRepairAction": "Check the state of peer CU-CP. Check the connectivity of CU-CP from CU-UP. Check SCTP and IP configuration."
+        },
+        "SCTP_LINK_UP": {
+            "eventType":"COMMUNICATION",
+            "domain": "fault",
+            "perceivedSeverity":"CLEAR",
+            "probableCause": "CU-CP operational or SCTP link restored.",
+            "specificProblem": "None",
+            "rootCauseIndicator": "None",
+            "trendIndication": "Yes",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": "None"
+        }
+    }
+}

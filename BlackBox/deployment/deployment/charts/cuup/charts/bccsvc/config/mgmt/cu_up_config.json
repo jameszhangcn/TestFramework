@@ -1,0 +1,17 @@
+{
+    "config": {
+        "dpsScale": [
+            {
+                "serviceName": "dpsAutoScale",
+                "scaleInTimer": 600,
+                "maxBunchOfReleaseReq": 100
+            }
+        ],
+        "pdcpconfig_up": [
+            {
+                "name": 0,
+                "enable_nr_up": false
+            }
+        ]
+    }
+}

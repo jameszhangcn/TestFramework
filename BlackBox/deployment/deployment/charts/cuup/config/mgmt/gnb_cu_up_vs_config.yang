@@ -1,0 +1,69 @@
+module gnb_cu_up_vs_config {
+	yang-version 1.1;
+
+	namespace "urn:mavenir:ns:yang:cuup:gnb-vs";
+	prefix "cuUpVsConfig";
+
+	import _3gpp_common_nrm_types { prefix nrmtype3gpp; }
+
+	import gnb_intfmgr_vs_config { prefix gnbIntfmgrVsConfig; }
+	import gnb_dpcm_vs_config { prefix gnbDpcmVsConfig; }    
+    import gnb_vpp_vs_config { prefix gnbVppVsConfig; } 
+    import gnb_cu_up_log_config { prefix gnbCuUpLogVsConfig; }
+
+
+	description "Vendor Specific GNB_CU_UP parameters ";
+
+	revision 2019-12-31 {
+			description "Initial revision";
+	}
+
+	grouping gnbCuUpConfig {
+		description "Contains specific configuration at GNBCUUP Level";
+        
+        leaf id {
+            config "true";
+            description "";
+            type nrmtype3gpp:t_dn;
+		}
+        
+        leaf gNBId {
+          description "Identifies a gNB within a PLMN. The gNB Identifier (gNB ID)
+            is part of the NR Cell Identifier (NCI) of the gNB cells.";
+            reference "gNB ID in 3GPP TS 38.300, Global gNB ID in 3GPP TS 38.413";
+          mandatory true;
+          type int64 { range "0..4294967295"; }
+        }
+
+        leaf gNBIdLength {
+          description "Indicates the number of bits for encoding the gNB ID.";
+            reference "gNB ID in 3GPP TS 38.300, Global gNB ID in 3GPP TS 38.413";
+          mandatory true;
+          type int32 { range "22..32"; }
+        }
+        
+        leaf gNBCUCPId {
+          description "Identifies the Central Unit of an gNB. Just for adding a label to counters.";
+          mandatory true;
+          type string { length "1..150"; }
+        }
+        
+        container intfmgr_vs_config {
+            uses gnbIntfmgrVsConfig:intfmgrVsConfigGrp;
+        }
+        
+        container vpp {
+            uses gnbVppVsConfig:vppVsConfigGrp;
+        }
+        
+        container dpcm_vs_config {
+            uses gnbDpcmVsConfig:dpcmVsConfigGrp;
+        }
+        
+        container logs {
+            uses gnbCuUpLogVsConfig:cuupLogVsConfigGrp;
+        }
+        
+	} //gnbCuUpConfig
+
+} //module

@@ -1,0 +1,46 @@
+module mavenir-{{.Values.nf.nfId}}-cu-up-config {
+    namespace "urn:mavenir:ns:yang:{{.Values.nf.nfId}}:config";
+    prefix {{.Values.nf.nfId}}-config;
+    import tailf-common { prefix tailf; }
+
+    revision "2020-06-24" {
+        description "Initial revision.";
+    }
+    container config {
+    list dpsScale {
+      key "serviceName";
+      max-elements 20;
+
+      leaf serviceName {
+        type string {
+          length "0..50";
+        }
+        mandatory true;
+      }
+      
+      leaf scaleInTimer {
+        type uint32;
+        mandatory true;
+      }
+      
+      leaf maxBunchOfReleaseReq {
+        type uint32;
+        mandatory true;
+      }    
+	  }
+    list pdcpconfig_up {
+      key "name";
+      max-elements 10;
+
+      leaf name {
+        type string;
+        mandatory true;
+      }
+
+      leaf enable_nr_up {
+        type boolean;
+        mandatory true;
+      }
+  }
+ }
+}

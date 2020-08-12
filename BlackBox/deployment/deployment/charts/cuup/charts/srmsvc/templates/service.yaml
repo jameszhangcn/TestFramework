@@ -1,0 +1,13 @@
+{{- $cnfHdr := (dict "" "") -}} 
+{{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
+apiVersion: v1
+kind: Service
+{{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" .Values.componentSpec.service.metaspec) }}
+spec:
+  ports:
+  - name: grpc
+    port: {{ .Values.componentSpec.service.ports.port }}
+    targetPort: {{ .Values.componentSpec.service.ports.targetPort }}
+  type: {{ .Values.componentSpec.service.type }}
+  selector:
+    app: srmsvc

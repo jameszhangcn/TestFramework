@@ -1,0 +1,37 @@
+{
+	"http": {
+		        "ip": "0.0.0.0",
+		        "port": 9999,
+		        "readTimeout": 31,
+		        "writeTimeout": 31,
+		        "certFile": "/config/tls/server.crt",
+		        "keyFile": "/config/tls/server.key"														    
+	},
+	"cimadapter": {
+		"cim": {
+			    "ip":"127.0.0.1",
+			    "port": 6060
+										        
+		},
+		        "natsSubject": "CONFIG"
+					    
+	},
+	"logServer": {
+		        "natsSubject": "LOG"
+					    
+	},
+	"eventServer":{
+		        "natsSubject": "EVENT"
+					    
+	},
+	"nats": {
+		        "address": "nats://127.0.0.1:4222"
+					    
+	},
+	"etcd": {
+		        "servers":["{{.Values.global.mtcil.etcd_svc_fqdn}}"],
+			    "username": "",
+			    "password": ""
+	}
+	
+}

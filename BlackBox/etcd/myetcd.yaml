@@ -31,7 +31,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: myetcd
-        image: quay.io/coreos/etcd:latest
+        image: k8s.gcr.io/etcd:3.4.3-0
         ports:
         - containerPort: 2389
           name: etcd-server

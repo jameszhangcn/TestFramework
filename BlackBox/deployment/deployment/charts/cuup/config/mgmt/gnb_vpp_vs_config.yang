@@ -1,0 +1,164 @@
+module gnb_vpp_vs_config {
+	yang-version 1.1;
+
+    namespace "urn:mavenir:ns:yang:cuup:vppcfg";
+    prefix "gnbVppVsConfig";
+
+    revision "2020-05-08" {
+        description "Initial revision.";
+    }
+    
+    grouping vppVsConfigGrp{
+  
+        container unix {
+            leaf nodaemon {
+                type boolean;
+                mandatory true;
+            }
+            leaf log {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+            }
+            leaf full-coredump {
+                type boolean;
+                mandatory true;
+            }
+            leaf cli-listen {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+            }
+            leaf interactive {
+                type boolean;
+                mandatory true;
+            }
+        }
+        
+        container api-trace {
+            leaf on {
+                type boolean;
+                mandatory true;
+            }
+        }
+        
+        container socksvr {
+            leaf default {
+                type boolean;
+                mandatory true;
+            }
+        }
+        
+        list cpu {
+            key "name";
+            max-elements 10;
+
+            leaf name {
+                type string;
+            }
+
+            leaf main-core {
+                type uint32;
+                mandatory true;
+            }
+            
+            leaf corelist-workers {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+            }
+        }
+        
+        container buffers {
+            leaf buffers-per-numa {
+                type uint32;
+                mandatory true;
+            }
+        }
+        
+        container dpdk {
+
+            container "dev-default" {
+                leaf num-rx-queues {
+                    type uint32;
+                    mandatory true;
+                }
+                leaf num-tx-queues {
+                    type uint32;
+                    mandatory true;
+                }
+            }
+            list "dev" {
+                key "name";
+                max-elements 10;
+
+                leaf pci {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                leaf name {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                leaf-list interface {
+                    description "The 3GPP interfaces bound to this device";
+                    type string {
+                        length "0..50";
+                    }
+                    max-elements 5;
+                }   
+            }
+            leaf uio-driver {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+            }
+            
+            leaf vdev {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+            }
+        }
+        container plugins {
+            leaf path {
+                type string {
+                    length "0..100";
+                }
+                mandatory true;
+            }
+        }
+        
+        container tap-inject {
+            leaf disable {
+                type boolean;
+                mandatory true;
+            }
+        }
+        
+        list custom {
+            key "name";
+            max-elements 10;
+
+            leaf name {
+                    type string;
+                }
+
+            leaf vppctl {
+                type string {
+                    length "0..150";
+                }
+                mandatory true;
+            }
+        }            
+    }
+}

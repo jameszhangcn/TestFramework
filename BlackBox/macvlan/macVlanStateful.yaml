@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: macvlanstateful
+  labels:
+    app: macvlanstateful
+spec:
+  ports:
+  - port: 22389
+    targetPort: 2389
+    name: mystateful
+  clusterIP: None
+  selector:
+    app: macvlanstateful
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: macvlanstateful
+  annotations:
+    k8s.v1.cni.cncf.io/networks: macvlan-conf-1
+spec:
+  selector:
+    matchLabels:
+      app: mystateful # has to match .spec.template.metadata.labels
+  serviceName: "mystateful"  #声明它属于哪个Headless Service.
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: mystateful # has to match .spec.selector.matchLabels
+      annotations:
+        k8s.v1.cni.cncf.io/networks: macvlan-conf-1
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mystateful
+        image: alpine
+        ports:
+        - containerPort: 2399
+          name: mystateful
+        command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]

@@ -1,0 +1,126 @@
+######## CNF TEMPLATE DEFINITIONS ###########
+nf:
+  #namespace: <VendorId>-<MTCILId>-<NFClass>-<NFType>-<NFId>
+  #e.g: mvnr-nr-appln-cuup-cuup1
+  version: v1
+  vendorId: mvnr
+  mtcilId: mtcil1
+  nfClass: appln
+  nfType: cuup
+  nfId: cuup1
+
+  cnftpl_configmap:
+    mgmt_cfg:
+      create: true
+      metaspec:        
+        annotations:
+          configMgmt: enabled
+    static_cfg: 
+      create: false
+      metaspec: {}
+    env_cfg:
+      create: true
+      metaspec: {}
+  cnftpl_secret:
+      create: false
+      metaspec: {}
+      secretspec: {}
+  cnftpl_namespaces:
+      create: false
+      metaspec: {}
+  cnftpl_dashboard:
+      create: false
+      metaspec: {}
+  cnftpl_eventdef:
+      create: false
+      metaspec: {}
+  cnftpl_alertsdef:
+      create: false
+      metaspec: {}
+  cnftpl_metricsdef:
+      create: false
+      metaspec: {}
+      
+###########################################
+
+nf_variables:
+  static_cfg: {}
+  env_cfg:
+    max_connection: 100
+    cim_port: 9999
+    config_root: /config
+    config_static: static
+    config_mgmt: mgmt
+    cert_root: cert
+  mgmt_cfg: {}
+
+componentSpec:
+
+  clusterrole: 
+    metaspec: 
+      ext_name: cuup
+
+  clusterrolebinding: 
+    metaspec:
+      ext_name: cuup
+
+  serviceaccount: {}
+
+  ingress:
+    metaspec: {}
+
+  service:
+    metaspec: {}
+    ports:
+      port: "9005"
+      targetPort: "9005"
+    type: ClusterIP
+
+  deployment:
+    replicas: 1
+    pod_metaspec:
+      labels:
+        app: dataplane
+      annotations: 
+        k8s.v1.cni.cncf.io/networks: cuup-sriov-dpdk-f1,cuup-sriov-dpdk-n3,cuup-sriov-dpdk-x2
+    us_bccsvc:
+      hub: 10.69.12.211:5000
+      image: bccsvc
+      tag: 0.0.1
+      env_svc_id: "bcc-svc"
+      iwf_qfdn: '"iwfsvc-0.iwfsvc"'
+      iwf_grpc_port: '"9006"'
+      bcc_qfdn: '"bccsvc-0.bccsvc"'
+      bcc_grpc_port: '"9005"'
+      resources:
+        limits:
+          cpu: "4"
+          memory: "40Gi"
+          hugepages_2Mi: "8Gi"
+          sriov_neta: '2'
+          sriov_netb: '1'
+        requests:
+          cpu: "4.0"
+          memory: "35Gi"
+          sriov_neta: '2'
+          sriov_netb: '1'
+      mount:
+        type: Directory
+        container_path: /opt/logs
+        host_path: /data/logs          
+    us_cim:
+      hub: 10.69.12.211:5000
+      image: cim
+      tag: v1.7
+      app_port: 9999
+      resources:
+        requests:
+          cpu: "120m"
+          memory: "200Mi"
+        limits:
+          cpu: "120m"
+          memory: "200Mi"
+      mount:
+        type: Directory
+        container_path: /opt/logs
+        host_path: /data/logs

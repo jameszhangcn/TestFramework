@@ -1,0 +1,18 @@
+{
+    "mavenir_data_container": [
+        "iwfsvc",
+        "intfmgrsvc",
+        "gwsvc",
+        "dprmsvc",
+        "srmsvc",
+        "bccsvc"
+    ],
+    "gnb_vs_config": [
+        "iwfsvc",
+        "intfmgrsvc",
+        "gwsvc",
+        "dprmsvc",
+        "srmsvc",
+        "bccsvc"
+    ]
+}

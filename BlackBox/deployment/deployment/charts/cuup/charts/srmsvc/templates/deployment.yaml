@@ -1,0 +1,144 @@
+{{- $cnfHdr := (dict "" "") -}} 
+{{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
+apiVersion: apps/v1
+kind: Deployment
+{{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" "") }}
+spec:
+  replicas: {{ .Values.componentSpec.deployment.replicas }}
+  selector: 
+    matchLabels:
+     app: srmsvc
+  template:
+    {{- include "cnfTplMetadata_2_8" (dict "setOffset" "4" "cnfHdr" $cnfHdr "metadata" .Values.componentSpec.deployment.pod_metaspec) }}
+    spec:
+      serviceAccountName: {{ $cnfHdr.nfVariables.svcname }}
+      {{- if and (.Values.global) (.Values.global.cuup) (.Values.global.cuup.spNodeSelector) (.Values.global.cuup.spNodeSelector.enabled) }}
+      nodeSelector:
+        {{ .Values.global.cuup.spNodeSelector.labelKey }}: {{ .Values.global.cuup.spNodeSelector.labelValue | quote }}
+      {{- end }}
+
+      containers:
+        -
+          imagePullPolicy: Always
+          {{- if and (.Values.global) (.Values.global.hub) (.Values.global.tag) }}
+          image: {{ .Values.global.hub }}/{{.Values.componentSpec.deployment.us_srmsvc.image}}:{{.Values.global.tag}}
+          {{- else }}
+          image: {{.Values.componentSpec.deployment.us_srmsvc.hub}}/{{.Values.componentSpec.deployment.us_srmsvc.image}}:{{.Values.componentSpec.deployment.us_srmsvc.tag}}
+          {{- end }}
+          name: srmsvc
+          ports:
+            - containerPort: {{ .Values.nf_variables.env_cfg.cim_port }}
+              name: http    
+          tty: true
+          volumeMounts:
+            - mountPath: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_mgmt }}/common
+              name: cuup-config-global    
+            - mountPath: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_static }}/common
+              name: cuup-config-static
+          env:
+            - name: CONFIG_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}
+            - name: CONFIG_MGMT_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_mgmt }}
+            - name: CONFIG_STATIC_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_static }}
+            - name: CONFIG_CERT_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.cert_root }}
+            - name: K8S_POD_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name 
+          envFrom:
+            - configMapRef:
+                name: srmsvc-v1-env-cfg                
+          resources:
+            limits:
+              cpu: {{ .Values.componentSpec.deployment.us_srmsvc.resources.limits.cpu }}
+              memory: {{ .Values.componentSpec.deployment.us_srmsvc.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.componentSpec.deployment.us_srmsvc.resources.requests.cpu }}
+              memory: {{ .Values.componentSpec.deployment.us_srmsvc.resources.requests.memory }}
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /data/readiness
+            initialDelaySeconds: 5
+            periodSeconds: 5
+        -
+          command:
+            - /bin/bash
+            - -c
+            - NatsSubFb
+          env:
+            - name: NF_CONFIG_REVISION
+              valueFrom:
+                configMapKeyRef:
+                  name: cuup-v1-mgmt-cfg
+                  key: revision
+            - name: K8S_POD_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MICROSERVICE_NAME
+              value: {{ $cnfHdr.nfVariables.svcname }}
+            - name: NF_PREFIX
+              value: {{ $cnfHdr.nfVariables.nfPrefix }}
+            - name: NF_TYPE
+              value: {{ $cnfHdr.nfVariables.nfType }}
+            - name: NF
+              value: {{ $cnfHdr.nfVariables.nfName }}
+          envFrom:
+            - configMapRef:
+                name: srmsvc-v1-env-cfg
+          {{- if (.Values.global) and (.Values.global.hub) }}
+          image: {{ .Values.global.hub }}/{{.Values.componentSpec.deployment.us_cim.image}}:{{.Values.componentSpec.deployment.us_cim.tag}}
+          {{- else }}
+          image: {{.Values.componentSpec.deployment.us_cim.hub}}/{{.Values.componentSpec.deployment.us_cim.image}}:{{.Values.componentSpec.deployment.us_cim.tag}}
+          {{- end }}
+          imagePullPolicy: Always
+          name: us-cim
+          tty: true
+          volumeMounts:
+            - mountPath: /config/global/
+              name: cuup-config-global
+            - mountPath: /config/cfg2
+              name: srmsvc-config-env
+            - mountPath: /config/cfg_static
+              name: cuup-config-static
+            - name: mnt-log
+              mountPath: {{ .Values.componentSpec.deployment.us_cim.mount.container_path }}
+            - mountPath: /opt/conf/
+              name: cim-config
+          resources:
+            limits:
+              memory: {{ .Values.componentSpec.deployment.us_cim.resources.limits.memory }}
+              cpu: {{ .Values.componentSpec.deployment.us_cim.resources.limits.cpu }}
+            requests:
+              memory: {{ .Values.componentSpec.deployment.us_cim.resources.requests.memory }}
+              cpu: {{ .Values.componentSpec.deployment.us_cim.resources.requests.cpu }}
+      volumes:
+        - configMap:
+            name: srmsvc-v1-env-cfg
+          name: srmsvc-config-env
+        - configMap:
+            name: cuup-v1-mgmt-cfg
+          name: cuup-config-global
+        - configMap:
+            name: cuup-v1-static-cfg
+          name: cuup-config-static
+        - configMap:
+            items:
+              - key: cim.json
+                path: cim.json
+            name: cuup-v1-mgmt-cfg
+          name: cim-config
+        - name: mnt-log
+          hostPath:
+            path: {{ .Values.componentSpec.deployment.us_cim.mount.host_path }}
+            type: {{ .Values.componentSpec.deployment.us_cim.mount.type }} 
+          

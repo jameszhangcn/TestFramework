@@ -1,0 +1,111 @@
+######## CNF TEMPLATE DEFINITIONS ###########
+nf:
+  #namespace: <VendorId>-<MTCILId>-<NFClass>-<NFType>-<NFId>
+  #e.g: mvnr-nr-appln-cuup-cuup1
+  version: v1
+  vendorId: mvnr
+  mtcilId: mtcil1
+  nfClass: appln
+  nfType: cuup
+  nfId: cuup1
+
+  cnftpl_configmap:
+    mgmt_cfg:
+      create: true
+      metaspec:        
+        annotations:
+          configMgmt: enabled
+    static_cfg: 
+      create: false
+      metaspec: {}
+    env_cfg:
+      create: true
+      metaspec: {}
+  cnftpl_secret:
+      create: false
+      metaspec: {}
+      secretspec: {}
+  cnftpl_namespaces:
+      create: false
+      metaspec: {}
+  cnftpl_dashboard:
+      create: false
+      metaspec: {}
+  cnftpl_eventdef:
+      create: true
+      metaspec: {}
+  cnftpl_alertsdef:
+      create: false
+      metaspec: {}
+  cnftpl_metricsdef:
+      create: false
+      metaspec: {}
+
+###########################################
+
+nf_variables:
+  static_cfg: {}
+  env_cfg:
+    max_connection: 100
+    cim_port: 9999
+    config_root: /config
+    config_static: static
+    config_mgmt: mgmt
+    cert_root: cert
+  mgmt_cfg: {}
+
+componentSpec:
+
+  clusterrole:
+    metaspec:
+      ext_name: cuup
+
+  clusterrolebinding:
+    metaspec:
+      ext_name: cuup
+
+  serviceaccount: {}
+
+  ingress: 
+    metaspec: {} 
+
+  service:
+    metaspec: {}
+    ports:
+      port: "9003"
+      targetPort: "9003"
+    type: ClusterIP
+
+  deployment:
+    replicas: 1
+    pod_metaspec:
+      labels:
+        app: intfmgrsvc
+    us_intfmgrsvc:
+      hub: 10.69.12.211:5000
+      image: intfmgrsvc
+      tag: 0.0.1
+      env_svc_id: "intfmgr-svc"
+      resources:
+        limits:
+          cpu: "400m"
+          memory: "500Mi"
+        requests:
+          cpu: "400m"
+          memory: "500Mi"
+    us_cim:
+      hub: 10.69.12.211:5000
+      image: cim
+      tag: v1.7
+      app_port: 9999
+      resources:
+        requests:
+          cpu: "120m"
+          memory: "200Mi"
+        limits:
+          cpu: "120m"
+          memory: "200Mi"
+      mount:
+        type: Directory
+        container_path: /opt/logs
+        host_path: /data/logs

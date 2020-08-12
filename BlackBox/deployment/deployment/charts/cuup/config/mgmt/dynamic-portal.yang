@@ -1,0 +1,118 @@
+module mavenir-{{.Values.nf.nfId}}-dynamic-portal {
+	yang-version 1.1;
+
+    namespace "urn:mavenir:ns:yang:{{.Values.nf.nfId}}:gnb-dynamic";
+
+	prefix dynamicVsConfig;
+
+    import tailf-common { prefix tailf; }
+
+    revision "2019-11-22" {
+        description "Initial revision.";
+    }
+    
+        container config {
+            tailf:callpoint configUpdate {
+                tailf:transaction-hook subtree;
+            }
+            
+            list serviceAccessInfo {
+                key "name";
+                max-elements 20;
+                ordered-by user;
+
+                leaf name {
+                    type string {
+                        length "0..100";
+                    }
+                    mandatory true;
+                }
+                leaf serviceProto {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                leaf isServer {
+                    type boolean;
+                    mandatory true;
+                }
+                leaf transport {
+                    type enumeration {
+                        enum TCP;
+                        enum UDP;
+                    }
+                    default TCP;
+                }
+                leaf startingPort {
+                    type uint32;
+                    mandatory true;
+                }
+                leaf portRange {
+                    type uint32;
+                    mandatory true;
+                }
+                leaf connectionTimeout {
+                    type uint32{
+                        range "1 .. 1800";
+                    }
+                    mandatory true;
+                    description "Client Connection timeout, unit is second";
+                }
+                leaf certificateFile {
+                    type string {
+                        length "0..512";
+                    }
+                    mandatory true;
+                    description "TLS certificate file";
+                }
+            }
+            
+            list remoteServer {
+                key "name";
+                min-elements 1;
+                max-elements 20;
+                ordered-by user;
+
+                leaf name {
+                    type string {
+                        length "0..100";
+                    }
+                    mandatory true;
+                }
+                leaf serviceProto {
+                    type string {
+                        length "0..50";
+                    }
+                    mandatory true;
+                }
+                leaf fqdn {
+                    type string {
+                        length "0..128";
+                    }
+                    mandatory true;
+                    description "The FQDN or IP of the target service";
+                }
+                leaf transport {
+                    type enumeration {
+                        enum TCP;
+                        enum UDP;
+                    }
+                    default TCP;
+                    description "Transport protocol";
+                }
+                leaf port {
+                    type uint32;
+                    mandatory true;
+                }
+                leaf grpcOption {
+                    type string {
+                        length "0..100";
+                    }
+                    default "withinsecure";
+                    description "grpc option";
+                }
+            }
+        }
+   
+}

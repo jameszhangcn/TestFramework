@@ -1,0 +1,32 @@
+{
+    "config": {
+        "dbSetting": [
+            {
+                "name":"config_db",
+                "dbType":"COUCHBASE",
+                "serverName":"127.0.0.1",
+                "port":8091,
+                "userName":"Administrator",
+                "password":"password",
+                "initClientCount":5,
+                "maxClientCount":10,
+                "lifeTime":10000,
+                "defaultBucket":"Session",
+                "defaultTable":"session"
+            },
+            {
+                "name":"session_db",
+                "dbType":"COUCHBASE",
+                "serverName":"127.0.0.1",
+                "port":8091,
+                "userName":"Administrator",
+                "password":"password",
+                "initClientCount":5,
+                "maxClientCount":10,
+                "lifeTime":10000,
+                "defaultBucket":"Session",
+                "defaultTable":"session"
+            }
+        ]
+    }
+}

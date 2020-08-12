@@ -1,0 +1,25 @@
+module mavenir_data_container {
+  yang-version 1.1;
+  namespace "urn:mavenir:ran:mavenir_data_container";
+  prefix mavenir;
+
+  import _3gpp-common-top { prefix top3gpp; }
+  import tailf-common { prefix tailf; }
+  //import _3gpp-common-measurements { prefix meas3gpp; }
+  //import _3gpp-common-fm { prefix fm3gpp; }
+  //import _3gpp-common-managed-element { prefix me3gpp; }
+  //import _3gpp-common-subnetwork { prefix subnet3gpp; }
+  //import _3gpp-nr-nrm-eutranetwork { prefix eutranet3gpp; }
+  //import ietf-yang-schema-mount { prefix yangmnt; }
+  //import _3gpp-nr-nrm-nrnetwork { prefix nrnet3gpp; }
+
+  
+
+list data{
+    tailf:callpoint configUpdate {
+       tailf:transaction-hook subtree;
+    }
+    key id;   // TODO: should this have a min-element/max-elements?
+    uses top3gpp:Top_Grp;
+    }
+}

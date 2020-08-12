@@ -1,0 +1,13 @@
+{{- $cnfHdr := (dict "" "") -}}
+{{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+{{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" .Values.componentSpec.clusterrolebinding.metaspec) }}
+subjects:
+- kind: ServiceAccount
+  name: {{ $cnfHdr.nfVariables.svcname }}
+  namespace: {{ $cnfHdr.nfVariables.nfPrefix }}
+roleRef:
+  kind: ClusterRole
+  name: {{ $cnfHdr.nfVariables.svcname }}-{{ .Values.componentSpec.clusterrole.metaspec.ext_name }}
+  apiGroup: rbac.authorization.k8s.io

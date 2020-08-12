@@ -1,0 +1,120 @@
+{
+	"config": {
+		"serviceAccessInfo": [
+			{
+				"name": "GW",
+				"serviceProto": "gRPC",
+				"isServer": true,
+				"transport": "TCP",
+				"startingPort": 9000,
+				"portRange": 1,
+				"connectionTimeout":20,
+				"certificateFile": "server.crt"
+			},
+			{
+				"name": "INTFMGR",
+				"serviceProto": "gRPC",
+				"isServer": true,
+				"transport": "TCP",
+				"startingPort": 9003,
+				"portRange": 1,
+				"connectionTimeout":20,
+				"certificateFile": "server.crt"
+			},
+			{
+				"name": "DPRM",
+				"serviceProto": "gRPC",
+				"isServer": true,
+				"transport": "TCP",
+				"startingPort": 9004,
+				"portRange": 1,
+				"connectionTimeout":20,
+				"certificateFile": "server.crt"
+			},
+			{
+				"name": "BCC",
+				"serviceProto": "gRPC",
+				"isServer": true,
+				"transport": "TCP",
+				"startingPort": 9005,
+				"portRange": 1,
+				"connectionTimeout":20,
+				"certificateFile": "server.crt"
+			},
+			{
+				"name": "IWF",
+				"serviceProto": "gRPC",
+				"isServer": true,
+				"transport": "TCP",
+				"startingPort": 9006,
+				"portRange": 1,
+				"connectionTimeout":20,
+				"certificateFile": "server.crt"
+			},
+			{
+				"name": "DPS",
+				"serviceProto": "gRPC",
+				"isServer": true,
+				"transport": "TCP",
+				"startingPort": 9007,
+				"portRange": 1,
+				"connectionTimeout":20,
+				"certificateFile": "server.crt"
+			},
+			{
+				"name": "SRM",
+				"serviceProto": "gRPC",
+				"isServer": true,
+				"transport": "TCP",
+				"startingPort": 9008,
+				"portRange": 1,
+				"connectionTimeout":20,
+				"certificateFile": "server.crt"
+			}
+		],
+		"clientsMapping": [
+			{
+				"name": "GW",
+				"fqdn": "gwsvc",
+				"timeout":10,
+				"grpcOption": "withinsecure"
+			},
+			{
+				"name": "INTFMGR",
+				"fqdn": "intfmgrsvc",
+				"timeout":10,
+				"grpcOption": "withinsecure"
+			},
+			{
+				"name": "DPRM",
+				"fqdn": "dprmsvc",
+				"timeout":10,
+				"grpcOption": "withinsecure"
+			},
+			{
+				"name": "BCC",
+				"fqdn": "bccsvc.bccsvc",
+				"timeout":10,
+				"grpcOption": "withinsecure"
+			},
+			{
+				"name": "IWF",
+				"fqdn": "iwfsvc.iwfsvc",
+				"timeout":10,
+				"grpcOption": "withinsecure"
+			},
+			{
+				"name": "DPS",
+				"fqdn": "bccsvc.bccsvc",
+				"timeout":10,
+				"grpcOption": "withinsecure"
+			},
+			{
+				"name": "SRM",
+				"fqdn": "srmsvc",
+				"timeout":10,
+				"grpcOption": "withinsecure"
+			}
+		]
+	}
+}

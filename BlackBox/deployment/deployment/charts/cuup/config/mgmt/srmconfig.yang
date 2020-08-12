@@ -1,0 +1,101 @@
+module mavenir-{{.Values.nf.nfId}}-srmconfig {
+    namespace "urn:mavenir:ns:yang:{{.Values.nf.nfId}}:srmconfig";
+	prefix {{.Values.nf.nfId}}-srmconfig;
+    import tailf-common { prefix tailf; }
+
+    revision "2020-07-29" {
+        description "Initial revision.";
+    }
+    container config {
+        tailf:callpoint configUpdate {
+            tailf:transaction-hook subtree;
+        }
+        list serviceScaled {
+            key "mServiceName";
+            max-elements 20;
+            ordered-by user;
+
+            leaf mServiceName {
+                type string {
+                    length "0..100";
+                }
+                mandatory true;
+            }
+            leaf mAutoScaleOut {
+                type boolean;
+//                mandatory true;
+                default false;
+            }
+            leaf mAutoScaleIn {
+                type boolean;
+//                mandatory true;
+                default false;
+            }
+            leaf mMaxInstances {
+                type uint32 {
+                    range "1..10";
+                }
+//                mandatory true;
+                default 10;
+            }
+            leaf mScaleOutRestrictTimer {
+                type uint32 {
+                    range "60..65535";
+                }
+//                mandatory true;
+                default 60;
+            }
+            leaf mScaleOutCalmDownTimer {
+                type uint32 {
+                    range "60..65535";
+                }
+//                mandatory true;
+                default 600;
+            }
+            leaf mServiceHeartBeat {
+                type uint32;
+                mandatory true;
+            }
+            list mThreshold {
+                key "mResourceType";
+                max-elements 10;
+                ordered-by user;
+
+                leaf mResourceType {
+                    type string;
+                }
+                leaf mScaleInThreshold {
+                    type uint32 {
+                        range "10..45";
+                    }
+//                    mandatory true;
+                    default 40;
+                }
+                leaf mScaleOutThreshold {
+                    type uint32 {
+                        range "50..100";
+                    }
+//                    mandatory true;
+                    default 70;
+                }
+            }
+            list mLimitation {
+                key "mResourceType";
+                max-elements 10;
+                ordered-by user;
+
+                leaf mResourceType {
+                    type string;
+                }
+                leaf mMinium {
+                    type uint32;
+                    mandatory true;
+                }
+                leaf mMaximum {
+                    type uint32;
+                    mandatory true;
+                }
+            }
+        }
+    }    
+}

@@ -1,0 +1,39 @@
+{
+	"cimConfig": {
+		"lmaas": {
+			"max_file_size_in_mb": 10,
+			"max_backup_files": 10,
+			"max_age": 7,
+			"buffer_size": 10000,
+			"flush_timeout": 30,
+			"enable_tcp": true,
+			"daemonset_push": true,
+			"fluentbit_svc_url": "fb-service.mvnr-paas.svc.cluster.local:5175",
+			"fluentbit_tcp_port": "5170"
+		},
+		"haaas": {
+			"hb_interval": 250,
+			"hb_frequency": 2,
+			"ha_timeout": 120
+		},
+		"cim_settings": {
+			"enable_kpi": true,
+			"kafka_brokers": [
+				"{{.Values.global.mtcil.kafka_svc_fqdn}}"
+			],
+			"etcd_url": "{{.Values.global.mtcil.etcd_svc_fqdn}}",
+			"http2_enabled": false,
+			"log_level": "ALL",
+			"cim_file_log": true,
+			"num_garp_count": 1 
+		},
+		"app_settings": {
+			"app_port": 9999,
+			"enable_logs": true,
+			"enable_config": true,
+			"enable_event": true,
+			"enable_trl": false,
+			"enable_cdr": false
+		}
+	}
+}

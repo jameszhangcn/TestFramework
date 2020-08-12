@@ -1,0 +1,21 @@
+# requirements.yaml
+dependencies:
+- name: iwfsvc
+  version: "0.0.1"
+  repository: http://10.69.12.211:8080
+- name: gwsvc
+  version: "0.0.1"
+  repository: http://10.69.12.211:8080
+- name: intfmgrsvc
+  version: "0.0.1"
+  repository: http://10.69.12.211:8080
+- name: dprmsvc
+  version: "0.0.1"
+  repository: http://10.69.12.211:8080
+- name: srmsvc
+  version: "0.0.1"
+  repository: http://10.69.12.211:8080  
+- name: bccsvc
+  version: "0.0.1"
+  repository: http://10.69.12.211:8080
+  

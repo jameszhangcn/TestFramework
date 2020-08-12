@@ -1,0 +1,29 @@
+module gnb_vs_config {
+		yang-version 1.1;
+
+	namespace "urn:mavenir:ns:yang:cuup:gnb";
+    prefix "cuupvsConfig";
+    
+    import tailf-common { prefix tailf; }
+    //import gnb_du_vs_config { prefix duVsConfig; }
+    //import gnb_cu_vs_config { prefix cuVsConfig; }
+    //import gnb_cu_cp_vs_config { prefix cuCpVsConfig; }
+    import gnb_cu_up_vs_config { prefix cuUpVsConfig; }
+
+
+    revision 2019-12-31 {
+        description "Initial revision";
+    }
+
+    container gnbvs {
+        tailf:callpoint configUpdate {
+            tailf:transaction-hook subtree;
+        }
+        
+        description "VsData GNB level";
+        //list gnbDuConfig { key "id"; uses duVsConfig:gnbDuConfig; max-elements 21;}
+        //list gnbCuConfig { key "id"; uses cuVsConfig:gnbCuConfig; max-elements 21;}
+        //list gnbCuCpConfig { key "id"; uses cuCpVsConfig:gnbCuCpConfig; max-elements 21;}
+        list gnbCuUpConfig { key "id"; uses cuUpVsConfig:gnbCuUpConfig; max-elements 21;}
+    }
+}

@@ -1,0 +1,15 @@
+{{- $cnfHdr := (dict "" "") -}} 
+{{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+{{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" .Values.componentSpec.clusterrole.metaspec) }}
+rules:
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "delete"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "watch", "create", "list", "replace", "update", "patch"]

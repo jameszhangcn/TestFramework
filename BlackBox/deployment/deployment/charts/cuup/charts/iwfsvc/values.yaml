@@ -1,0 +1,123 @@
+######## CNF TEMPLATE DEFINITIONS ###########
+nf:
+  #namespace: <VendorId>-<MTCILId>-<NFClass>-<NFType>-<NFId>
+  #e.g: mvnr-nr-appln-cuup-cuup1
+  version: v1
+  vendorId: mvnr
+  mtcilId: mtcil1
+  nfClass: appln
+  nfType: cuup
+  nfId: cuup1
+
+  cnftpl_configmap:
+    mgmt_cfg:
+      create: true
+      metaspec:        
+        annotations:
+          configMgmt: enabled
+    static_cfg: 
+      create: false
+      metaspec: {}
+    env_cfg:
+      create: true
+      metaspec: {}
+  cnftpl_secret:
+      create: false
+      metaspec: {}
+      secretspec: {}
+  cnftpl_namespaces:
+      create: false
+      metaspec: {}
+  cnftpl_dashboard:
+      create: false
+      metaspec: {}
+  cnftpl_eventdef:
+      create: true
+      metaspec: {}
+  cnftpl_alertsdef:
+      create: false
+      metaspec: {}
+  cnftpl_metricsdef:
+      create: true
+      metaspec: {}
+###########################################
+
+nf_variables:
+  static_cfg: {}
+  env_cfg:
+    max_connection: 100
+    cim_port: 9999
+    config_root: /config
+    config_static: static
+    config_mgmt: mgmt
+    cert_root: cert
+  mgmt_cfg: {}
+
+componentSpec:
+
+  clusterrole:
+    metaspec:
+      ext_name: cuup
+
+  clusterrolebinding:
+    metaspec:
+      ext_name: cuup
+
+  serviceaccount: {}
+
+  ingress: 
+    metaspec: {} 
+
+  service:
+    metaspec: {}
+    ports:
+      port: "9006"
+      targetPort: "9006"
+    type: ClusterIP
+
+  deployment:
+    replicas: 1
+    pod_metaspec:
+      labels:
+        name: iwfsvc
+        app: iwfsvc
+        nfinstanceid: CUUP
+      annotations: 
+        k8s.v1.cni.cncf.io/networks: cuup-macvlan-e1
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9999"
+        mtcil.com/haaas:
+               '{
+                       "monitoringMode": "hb",
+                       "mode": "allActive",
+                       "numStandby": "0"
+                }'
+    us_iwfsvc:
+      hub: 10.69.12.211:5000
+      image: iwfsvc
+      tag: 0.0.1
+      env_svc_id: "iwf-svc"
+      resources:
+        limits:
+          cpu: "250m"
+          memory: "2000Mi"
+        requests:
+          cpu: "250m"
+          memory: "1000Mi"
+    us_cim:
+      hub: 10.69.12.211:5000
+      image: cim
+      tag: v1.7
+      app_port: 9999
+      resources:
+        requests:
+          cpu: "120m"
+          memory: "200Mi"
+        limits:
+          cpu: "120m"
+          memory: "200Mi"
+      mount:
+        type: DirectoryOrCreate
+        container_path: /opt/logs
+        host_path: /data/logs

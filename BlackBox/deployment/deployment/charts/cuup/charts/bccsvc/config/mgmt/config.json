@@ -1,0 +1,99 @@
+{
+    "config": {
+        "unix": [
+            {
+                "name": 0,
+                "nodaemon": false,
+                "log": "/var/log/vpp/vpp.log",
+                "full-coredump": true,
+                "cli-listen": "/run/vpp/cli.sock",
+                "interactive": true
+            }
+        ],
+        "api-trace": [
+            {
+                "name": 0,
+                "on": true
+            }
+        ],
+        "socksvr": [
+            {
+                "name": 0,
+                "default": true
+            }
+        ],
+        "cpu": [
+            {
+                "name": 0,
+                "main-core": 1,
+                "corelist-workers": "2"
+            }
+        ],
+        "buffers": [
+            {
+                "name": 0,
+                "buffers-per-numa": 131072
+            }
+        ],
+        "dpdk": [
+            {
+                "id": 0,
+                "dev-default": [
+                    {
+                        "name": 0,
+                        "num-rx-queues": 4,
+                        "num-tx-queues": 4
+                    }
+                ],
+                "dev": [
+                    {
+                        "name": "eth1",
+                        "pci": "0000:00:09.0"
+                    },
+                    {
+                        "name": "eth2",
+                        "pci": "0000:00:0a.0"
+                    },
+                    {
+                        "name": "eth3",
+                        "pci": "0000:00:0b.0"
+                    }
+                ],
+                "uio-driver": "vfio-pci",
+                "vdev": "crypto_aesni_mb"
+            }
+        ],
+        "plugins": [
+            {
+                "name": 0,
+                "path": "/usr/local/mnvpp-pkg/lib/vpp_plugins"
+            }
+        ],
+        "tap-inject": [
+            {
+                "name": 0,
+                "disable": true
+            }
+        ],
+        "custom": [
+            {
+                "name": 0,
+                "vppctl": "set cu-up-ip-bypass enable"
+            }
+        ],
+        "ip": [
+            {
+                "name": "eth1",
+                "ip": "172.16.34.150/24"
+            },
+            {
+                "name": "eth2",
+                "ip": "172.16.35.150/24"
+            },
+            {
+                "name": "eth3",
+                "ip": "172.16.36.150/24"
+            }
+        ]
+    }
+}

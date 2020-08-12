@@ -1,0 +1,22 @@
+{
+    "path": "/metrics",
+    "counters":[
+        {
+            "Name":"CUUP_NumberOfMsgsSent",
+            "Help":"Number of messages sent",
+            "Labels":["MessageType", "UESpecific", "CUUPID", "CUCPID"]
+        },
+        {
+            "Name":"CUUP_NumberOfMsgsReceived",
+            "Help":"Number of messages received",
+            "Labels":["MessageType", "UESpecific", "CUUPID", "CUCPID"]
+        }
+    ],
+    "gauges":[
+
+    ],
+    "histograms":[
+
+    ]
+}
+

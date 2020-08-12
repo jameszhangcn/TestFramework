@@ -1,0 +1,247 @@
+module mavenir-{{.Values.nf.nfId}}-gnb_cu_up_config {
+	yang-version 1.1;
+
+    namespace "urn:mavenir:ns:yang:cuup:gnb-intfmgr";
+    prefix intfmgrVsConfig;
+
+    import tailf-common { prefix tailf; }
+
+    revision 2020-05-08 {
+        description "Initial revision.";
+    }
+
+        container config {
+            tailf:callpoint configUpdate {
+                tailf:transaction-hook subtree;
+            }
+
+            leaf gnbCuUpId {
+                type uint64{
+                    range "0 .. 68719476735";
+                }   
+                mandatory true;
+                description "Identifies the gNB-CU-UP at least within a gNB-CU-CP";
+                reference "'gNB-CU-UP ID' in subclause 9.3.1.15 of 3GPP TS 38.463";
+            }
+
+            leaf gnbCuUpNamePre {
+                type uint32 {
+                range "0..1";
+                }
+                mandatory true;
+                description "Whether gnbCuUpName Present";
+            }
+
+            leaf gnbCuUpName {
+                type string {
+                    length "1..150";
+                }
+                mandatory false;
+                description "Human readable name of the gNB-CU-UP";
+            }
+
+            leaf cnSupported {
+                type enumeration {
+                    enum EPC;
+                    enum 5GC;
+                    enum both;
+                }
+                mandatory true;
+                description "cnSupport: ENUMERATED (EPC. 5GC, both, …)";
+            }
+
+            typedef ip-address {
+                type union {
+                    type ipv4-address;
+                    type ipv6-address;
+                }
+                description
+                "The ip-address type represents an IP address and is IP
+                version neutral.  The format of the textual representation
+                implies the IP version.  This type supports scoped addresses
+                by allowing zone identifiers in the address format.";
+                reference
+                "RFC 4007: IPv6 Scoped Address Architecture";
+            }
+
+            typedef ipv4-address {
+                type string {
+                    pattern
+                    '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'
+                    + '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
+                    + '(%[\p{N}\p{L}]+)?';
+                }
+                description
+                "The ipv4-address type represents an IPv4 address in
+                dotted-quad notation.  The IPv4 address may include a zone
+                index, separated by a % sign.
+
+                The zone index is used to disambiguate identical address
+                values.  For link-local addresses, the zone index will
+                typically be the interface index number or the name of an
+                interface.  If the zone index is not present, the default
+                zone of the device will be used.
+
+                The canonical format for the zone index is the numerical
+                format";
+            }
+
+            typedef ipv6-address {
+                type string {
+                    pattern
+                    '((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}'
+                    + '((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|'
+                    + '(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}'
+                    + '(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))'
+                    + '(%[\p{N}\p{L}]+)?';
+                    pattern
+                    '(([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|'
+                    + '((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)'
+                    + '(%.+)?';
+                }
+                description
+                "The ipv6-address type represents an IPv6 address in full,
+                mixed, shortened, and shortened-mixed notation.  The IPv6
+                address may include a zone index, separated by a % sign.
+
+                The zone index is used to disambiguate identical address
+                values.  For link-local addresses, the zone index will
+                typically be the interface index number or the name of an
+                interface.  If the zone index is not present, the default
+                zone of the device will be used.
+
+
+
+                The canonical format of IPv6 addresses uses the textual
+                representation defined in Section 4 of RFC 5952.  The
+                canonical format for the zone index is the numerical
+                format as described in Section 11.2 of RFC 4007.";
+                reference
+                "RFC 4291: IP Version 6 Addressing Architecture
+                RFC 4007: IPv6 Scoped Address Architecture
+                RFC 5952: A Recommendation for IPv6 Address Text
+                Representation";
+            }
+
+            typedef port-number {
+                type uint16 {
+                    range "0..65535";
+                }
+                description
+                "The port-number type represents a 16-bit port number of an
+                Internet transport-layer protocol such as UDP, TCP, DCCP, or
+                SCTP.  Port numbers are assigned by IANA.  A current list of
+                all assignments is available from <http://www.iana.org/>.
+
+                Note that the port number value zero is reserved by IANA.  In
+                situations where the value zero does not make sense, it can
+                be excluded by subtyping the port-number type.
+                In the value set and its semantics, this type is equivalent
+                to the InetPortNumber textual convention of the SMIv2.";
+                reference
+                "RFC  768: User Datagram Protocol
+                RFC  793: Transmission Control Protocol
+                RFC 4960: Stream Control Transmission Protocol
+                RFC 4340: Datagram Congestion Control Protocol (DCCP)
+                RFC 4001: Textual Conventions for Internet Network Addresses";
+            }
+
+            container localSctpEndpoint {
+
+                leaf-list localIp{ 
+                    type ip-address;
+                    min-elements 1;
+                }		
+
+                leaf localPort{
+                    type port-number;
+                    mandatory true;
+                }
+            }
+
+            leaf upE1SetupMaxRetryNum {
+                type uint32{
+                    range "0 .. 5"; 
+                }
+                mandatory true;
+                description "The maximum retry number for CU-UP E1 Setup request";
+            }
+
+            leaf AssoEstabTimerExpiry {
+                type uint32{
+                    range "0 .. 120";
+                }
+                mandatory true;
+                description "The timer length for association establishment procedure.
+                If the timer expires, the whole procedure will end";
+            }
+
+            leaf upE1SetupTimerExpiry {
+                type uint32{
+                    range "0 .. 120";
+                }
+                mandatory true;
+                description "The timer length for CU-UP E1 Setup request.  
+                If the timer expires, a retry will be invoked if not reach maximum retry number";
+            }	
+
+            typedef Mcc {
+                description "The mobile country code consists of three decimal digits, 
+                The first digit of the mobile country code identifies the geographic 
+                region (the digits 1 and 8 are not used):";
+                type string;
+                reference "3GPP TS 23.003 subclause 2.2 and 12.1";
+            }
+
+            typedef Mnc {
+                description "The mobile network code consists of two or three 
+                decimal digits (for example: MNC of 001 is not the same as MNC of 01)";
+                type string;
+                reference "3GPP TS 23.003 subclause 2.2 and 12.1";
+            }
+
+            grouping PLMNId {
+                leaf mcc {
+                    mandatory true;
+                    type Mcc;
+                }
+                leaf mnc {
+                    mandatory true;
+                    type Mnc;
+                }
+                reference "TS 23.658";
+            }
+
+            list supportedPlmns {
+                key name;
+                min-elements 1;
+                max-elements 12;	
+
+                leaf name {
+                    type string;
+                }
+
+                container plmnId {
+                    uses PLMNId;
+                }
+            }		
+
+            leaf gnbCuUpCapacityPre {
+                type uint32{
+                    range "0 .. 1";
+                }
+                mandatory true;
+                description "Whether gnbCuUpCapacity present";
+            }
+
+            leaf gnbCuUpCapacity {
+                type uint32{
+                    range "0 .. 255";
+                }
+                mandatory false;
+                description "It indicates the relative processing capacity of an 
+                gNB-CU-UP with respect to other gNB-CU-UPs in order to load-balance among different gNB-CU-UPs";
+            }		
+        }
+    
+}

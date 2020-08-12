@@ -1,0 +1,10 @@
+metrics:
+  AdditionalObjects:
+    -
+      object_name: GNBCUUPFunction
+      object_instance: CUUP_NumberOfMsgsReceived
+      expr: "CUUP_NumberOfMsgsReceived"
+      object_keys:
+        -
+          expr: "{{.labels.MessageType}}"
+          name: MessageType

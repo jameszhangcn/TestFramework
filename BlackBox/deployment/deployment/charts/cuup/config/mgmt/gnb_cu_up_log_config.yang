@@ -1,0 +1,47 @@
+module gnb_cu_up_log_config {
+	yang-version 1.1;
+
+    namespace "urn:mavenir:ns:yang:cuup:logcfg";
+    prefix "gnbCuUpLogVsConfig";
+
+    revision "2020-05-08" {
+        description "Initial revision.";
+    }
+    
+    grouping cuupLogVsConfigGrp {
+  
+        container globalSetting {
+            leaf level {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+            }
+        }
+        
+        list modules {
+            key "name";
+            max-elements 100;
+
+            leaf name {
+                type string {
+                    length "0..50";
+                }
+                mandatory true;
+            }
+            
+            leaf enabled {
+                type boolean;
+                mandatory true;
+            }
+            
+            leaf callStackDepth {
+                type uint32{
+                    range "0..5"; 
+                }
+                mandatory true;
+                description "call stack depth with logging";
+            }
+       }        
+    }
+}

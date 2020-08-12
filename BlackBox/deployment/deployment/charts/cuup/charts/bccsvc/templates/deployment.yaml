@@ -1,0 +1,223 @@
+{{- $cnfHdr := (dict "" "") -}} 
+{{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
+apiVersion: apps/v1
+kind: StatefulSet
+{{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" "") }}
+spec:
+  replicas: {{ .Values.componentSpec.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: dataplane
+  serviceName: "bccsvc"
+  template:
+    {{- include "cnfTplMetadata_2_8" (dict "setOffset" "4" "cnfHdr" $cnfHdr "metadata" .Values.componentSpec.deployment.pod_metaspec) }}
+    spec:
+      serviceAccountName: {{ $cnfHdr.nfVariables.svcname }}
+#      hostNetwork: true
+#      dnsPolicy: ClusterFirstWithHostNet
+      {{- if and (.Values.global) (.Values.global.cuup) (.Values.global.cuup.dpNodeSelector) (.Values.global.cuup.dpNodeSelector.enabled) }}
+      nodeSelector:
+        {{ .Values.global.cuup.dpNodeSelector.labelKey }}: {{ .Values.global.cuup.dpNodeSelector.labelValue | quote }}
+      {{- end }}
+      containers:
+        -
+          imagePullPolicy: Always
+          {{- if and (.Values.global) (.Values.global.hub) (.Values.global.tag) }}
+          image: {{ .Values.global.hub }}/{{.Values.componentSpec.deployment.us_bccsvc.image}}:{{.Values.global.tag}}
+          {{- else }}
+          image: {{.Values.componentSpec.deployment.us_bccsvc.hub}}/{{.Values.componentSpec.deployment.us_bccsvc.image}}:{{.Values.componentSpec.deployment.us_bccsvc.tag}}
+          {{- end }}
+          name: dataplane
+          securityContext:
+            privileged: true	  
+          ports:
+            - containerPort: {{ .Values.nf_variables.env_cfg.cim_port }}
+              name: http
+          tty: true
+          volumeMounts:
+            - mountPath: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_mgmt }}/common
+              name: cuup-config-global
+            - mountPath: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_mgmt }}/svc
+              name: bccsvc-config
+            - mountPath: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_static }}/common
+              name: cuup-config-static
+            - name: podinfo
+              mountPath: /etc/podinfo
+              readOnly: false
+            - name: bccsvc-config
+              mountPath: /config
+              readOnly: false 
+            - name: devices
+              mountPath: /sys/bus/pci/devices
+              readOnly: false
+            - name: hugepages
+              mountPath: /sys/kernel/mm/hugepages
+              readOnly: false
+            - name: node
+              mountPath: /sys/devices/system/node 
+              readOnly: false
+            - name: dev
+              mountPath: /dev 
+              readOnly: false
+            - name: shm
+              mountPath: /dev/shm
+              readOnly: false  
+            - name: sys
+              mountPath: /sys
+              readOnly: false     
+            - name: bcc-log
+              mountPath: {{ .Values.componentSpec.deployment.us_bccsvc.mount.container_path }}              
+              readOnly: false
+          env:
+            - name: CONFIG_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}
+            - name: CONFIG_MGMT_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_mgmt }}
+            - name: CONFIG_STATIC_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.config_static }}
+            - name: CONFIG_CERT_ROOT
+              value: {{ .Values.nf_variables.env_cfg.config_root }}/{{ .Values.nf_variables.env_cfg.cert_root }}
+            - name: K8S_POD_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: bccsvc-v1-env-cfg
+          resources:
+            limits:
+              cpu: {{ .Values.global.cuup.dp_resources.limits.cpu }} 
+              memory: {{ .Values.global.cuup.dp_resources.limits.memory }}
+              hugepages-2Mi: {{ .Values.global.cuup.dp_resources.limits.hugepages_2Mi }}
+              intel.com/sriov_neta: {{ .Values.global.cuup.dp_resources.limits.sriov_neta }}
+              intel.com/sriov_netb: {{ .Values.global.cuup.dp_resources.limits.sriov_netb }} 
+            requests:
+              cpu: {{ .Values.global.cuup.dp_resources.requests.cpu }}
+              memory: {{ .Values.global.cuup.dp_resources.requests.memory }}
+              intel.com/sriov_neta: {{ .Values.global.cuup.dp_resources.requests.sriov_neta }}
+              intel.com/sriov_netb: {{ .Values.global.cuup.dp_resources.limits.sriov_netb }}
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /data/readiness
+            initialDelaySeconds: 5
+            periodSeconds: 5              
+        -
+          command:
+            - /bin/bash
+            - -c
+            - NatsSubFb
+          env:
+            - name: MS_CONFIG_REVISION
+              valueFrom: 
+                configMapKeyRef:
+                  name: bccsvc-v1-mgmt-cfg
+                  key: revision
+            - name: NF_CONFIG_REVISION
+              valueFrom:
+                configMapKeyRef:
+                  name: cuup-v1-mgmt-cfg
+                  key: revision
+            - name: K8S_POD_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MICROSERVICE_NAME
+              value: {{ $cnfHdr.nfVariables.svcname }}
+            - name: NF_PREFIX
+              value: {{ $cnfHdr.nfVariables.nfPrefix }}
+            - name: NF_TYPE
+              value: {{ $cnfHdr.nfVariables.nfType }}
+            - name: NF
+              value: {{ $cnfHdr.nfVariables.nfName }}              
+          envFrom:
+            - configMapRef:
+                name: bccsvc-v1-env-cfg
+          {{- if (.Values.global) and (.Values.global.hub) }}
+          image: {{ .Values.global.hub }}/{{.Values.componentSpec.deployment.us_cim.image}}:{{.Values.componentSpec.deployment.us_cim.tag}}
+          {{- else }}
+          image: {{.Values.componentSpec.deployment.us_cim.hub}}/{{.Values.componentSpec.deployment.us_cim.image}}:{{.Values.componentSpec.deployment.us_cim.tag}}
+          {{- end }}
+          imagePullPolicy: Always
+          name: us-cim
+          tty: true
+          volumeMounts:
+            - mountPath: /config/global/
+              name: cuup-config-global
+            - mountPath: /config/mgmt/
+              name: bccsvc-config
+            - mountPath: /config/cfg2
+              name: bccsvc-config-env
+            - mountPath: /config/cfg_static
+              name: cuup-config-static
+            - name: mnt-log
+              mountPath: {{ .Values.componentSpec.deployment.us_cim.mount.container_path }}
+            - mountPath: /opt/conf/
+              name: cim-config
+          resources:
+            limits:
+              memory: {{ .Values.componentSpec.deployment.us_cim.resources.limits.memory }}
+              cpu: {{ .Values.componentSpec.deployment.us_cim.resources.limits.cpu }}
+            requests:
+              cpu: {{ .Values.componentSpec.deployment.us_cim.resources.requests.cpu }}
+              memory: {{ .Values.componentSpec.deployment.us_cim.resources.requests.memory }}
+      volumes:
+        - name: podinfo
+          downwardAPI:
+            items:
+            - path: "labels"
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: "annotations"
+              fieldRef:
+                fieldPath: metadata.annotations
+        - name: devices
+          hostPath: 
+            path: /sys/bus/pci/devices
+        - name: hugepages
+          hostPath: 
+            path: /sys/kernel/mm/hugepages 
+        - name: node
+          hostPath:
+            path: /sys/devices/system/node
+        - name: dev
+          hostPath:
+            path: /dev 
+        - name: shm
+          hostPath:
+            path: /dev/shm 
+        - name: sys
+          hostPath:
+            path: /sys                 
+      
+        - configMap:
+            name: bccsvc-v1-mgmt-cfg
+          name: bccsvc-config
+        - configMap:
+            name: bccsvc-v1-env-cfg
+          name: bccsvc-config-env
+        - configMap:
+            name: cuup-v1-mgmt-cfg
+          name: cuup-config-global
+        - configMap:
+            name: cuup-v1-static-cfg
+          name: cuup-config-static
+        - configMap:
+            items:
+              - key: cim.json
+                path: cim.json
+            name: cuup-v1-mgmt-cfg
+          name: cim-config
+        - name: mnt-log
+          hostPath:
+            path: {{ .Values.componentSpec.deployment.us_cim.mount.host_path }}
+            type: {{ .Values.componentSpec.deployment.us_cim.mount.type }} 
+        - name: bcc-log
+          hostPath:
+            path: {{ .Values.componentSpec.deployment.us_bccsvc.mount.host_path }}
+            type: {{ .Values.componentSpec.deployment.us_bccsvc.mount.type }}

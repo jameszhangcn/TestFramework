@@ -1,0 +1,62 @@
+{
+	"config": {
+        "serviceScaled":[
+            {
+                "mServiceName": "DPS",
+                "mAutoScaleOut": true,
+                "mAutoScaleIn": true,
+                "mMaxInstances": 10,
+                "mScaleOutRestrictTimer": 60,
+                "mScaleOutCalmDownTimer": 600,
+                "mServiceHeartBeat": 30,
+                "mThreshold": [
+                    {
+                        "mResourceType": "CPU",
+                        "mScaleInThreshold": 40,
+                        "mScaleOutThreshold": 70
+                    },
+                    {
+                        "mResourceType": "BEARERS",
+                        "mScaleInThreshold": 40,
+                        "mScaleOutThreshold": 70
+                    }
+                ],
+                "mLimitation": [
+                    {
+                        "mResourceType": "NICNum",
+                        "mMinium": 5,
+                        "mMaximum": 50
+                    }
+                ]
+            },
+            {
+                "mServiceName": "iwfsvc",
+                "mAutoScaleOut": false,
+                "mAutoScaleIn": false,
+                "mMaxInstances": 10,
+                "mScaleOutRestrictTimer": 60, 
+                "mScaleOutCalmDownTimer": 600,
+                "mServiceHeartBeat": 30,
+                "mThreshold": [
+                    {
+                        "mResourceType": "CPU",
+                        "mScaleInThreshold": 40,
+                        "mScaleOutThreshold": 70
+                    },
+                    {
+                        "mResourceType": "BEARERS",
+                        "mScaleInThreshold": 40,
+                        "mScaleOutThreshold": 70
+                    }
+                ],
+                "mLimitation": [
+                    {
+                        "mResourceType": "AssocNum",
+                        "mMinium": 10,
+                        "mMaximum": 20
+                    }
+                ]
+            }
+        ]
+	}
+}
