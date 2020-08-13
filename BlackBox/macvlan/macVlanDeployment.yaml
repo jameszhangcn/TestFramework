@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testmacvlan-deployment
+  labels:
+    app: testmacvlan
+ 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: testmacvlan
+  template:
+    metadata:
+      labels:
+        app: testmacvlan
+      annotations:
+        k8s.v1.cni.cncf.io/networks: macvlan-conf-1
+    spec:
+      containers:
+      - name: testmacvlan
+        image: alpine:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+        resources:
+            limits:
+                cpu: "2"
+                memory: 512Mi
+            requests:
+                cpu: 250m
+                memory: 250Mi
