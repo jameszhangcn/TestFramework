@@ -76,23 +76,28 @@ componentSpec:
     type: ClusterIP
 
   deployment:
-    replicas: 1
+    replicas: 3
     pod_metaspec:
       labels:
         name: iwfsvc
         app: iwfsvc
         nfinstanceid: CUUP
       annotations: 
-        k8s.v1.cni.cncf.io/networks: cuup-macvlan-e1
+        k8s.v1.cni.cncf.io/networks: cuup-macvlan-e1,cuup-macvlan-e1
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: "9999"
-        mtcil.com/haaas:
-               '{
-                       "monitoringMode": "hb",
-                       "mode": "allActive",
-                       "numStandby": "0"
-                }'
+        #mtcil.com/haaas:
+        #      '{
+        #              "monitoringMode": "hb",
+        #              "mode": "coldStandby",
+        #              "numStandby": "2"
+        #       }'
+        mtcil.com/vip-networks: '[{"interface": "net1","poolids":
+                ["vipspec1", "vipspec1", "vipspec2"]},
+                {"interface": "net2","poolids":
+                ["vipspec1", "vipspec2", "vipspec2"]}
+                ]'
     us_iwfsvc:
       hub: 10.69.12.211:5000
       image: iwfsvc
@@ -103,21 +108,23 @@ componentSpec:
           cpu: "250m"
           memory: "2000Mi"
         requests:
-          cpu: "250m"
-          memory: "1000Mi"
+          cpu: "100m"
+          memory: "200Mi"
     us_cim:
       hub: 10.69.12.211:5000
       image: cim
       tag: v1.7
+      lifecycle: 
+        type: Sidecar
       app_port: 9999
       resources:
         requests:
-          cpu: "120m"
+          cpu: "100m"
           memory: "200Mi"
         limits:
           cpu: "120m"
           memory: "200Mi"
       mount:
-        type: DirectoryOrCreate
+        type: Directory
         container_path: /opt/logs
         host_path: /data/logs

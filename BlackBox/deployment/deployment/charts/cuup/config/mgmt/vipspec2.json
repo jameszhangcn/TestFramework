@@ -1,0 +1,27 @@
+{
+  "cniVersion": "0.3.1",
+  "plugins": [
+    {
+      "type": "macvlan",
+      "master": "enp0s8",
+      "ipam": {
+        "type": "host-local",
+        "ranges": [
+          [
+            {
+              "subnet": "180.0.0.0/24",
+              "rangeStart": "180.0.0.2",
+              "rangeEnd": "180.0.0.140",
+              "gateway": "180.0.0.1"
+            }
+          ]
+        ],
+        "routes": [
+          {
+            "dst": "0.0.0.0/0"
+          }
+        ]
+      }
+    }
+  ]
+}

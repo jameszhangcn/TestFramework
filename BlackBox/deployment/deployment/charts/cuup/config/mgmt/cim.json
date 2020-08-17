@@ -6,8 +6,8 @@
 			"max_age": 7,
 			"buffer_size": 10000,
 			"flush_timeout": 30,
-			"enable_tcp": true,
-			"daemonset_push": true,
+			"enable_tcp": false,
+			"daemonset_push": false,
 			"fluentbit_svc_url": "fb-service.mvnr-paas.svc.cluster.local:5175",
 			"fluentbit_tcp_port": "5170"
 		},

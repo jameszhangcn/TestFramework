@@ -124,6 +124,8 @@ spec:
               mountPath: {{ .Values.componentSpec.deployment.us_cim.mount.container_path }}
             - mountPath: /opt/conf/
               name: cim-config
+            - mountPath: /opt/vipconf
+              name: mnt-vip-spec
           resources:
             limits:
               memory: {{ .Values.componentSpec.deployment.us_cim.resources.limits.memory }}
@@ -150,6 +152,14 @@ spec:
                 path: cim.json
             name: cuup-v1-mgmt-cfg
           name: cim-config
+        - configMap:
+            items:
+              - key: vipspec1.json
+                path: vipsepc1.json
+              - key: vipspec2.json
+                path: vipsepc2.json
+            name: cuup-v1-mgmt-cfg
+          name: mnt-vip-spec
         - name: mnt-log
           hostPath:
             path: {{ .Values.componentSpec.deployment.us_cim.mount.host_path }}

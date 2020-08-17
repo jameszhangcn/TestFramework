@@ -190,8 +190,8 @@ func WaitNatsReady() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Err: %s \n", err.Error())
 			//for host test
-			myNatsIP = "127.0.0.1"
-			break
+			//myNatsIP = "127.0.0.1"
+			//break
 			//end for host test
 
 		} else {

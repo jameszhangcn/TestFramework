@@ -12,7 +12,7 @@ import (
 )
 
 var myEtcdIP string
-var myEtcdPort = ":2389"
+var myEtcdPort = ":2379"
 var etcdClient *clientv3.Client
 
 func init() {
@@ -50,8 +50,8 @@ func getDBIp() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Err: %s", err.Error())
 			//for local test
-			myEtcdIP = "127.0.0.1"
-			return
+			//myEtcdIP = "127.0.0.1"
+			//return
 			//end for local test
 		} else {
 

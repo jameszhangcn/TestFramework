@@ -4,11 +4,13 @@ metadata:
   name: simuctl
   namespace: default
 spec:
+  initContainers:
+          - name: init-nats-server
+            image: busybox:latest
+            command: ['sh', '-c', 'until nslookup myetcd; do echo waiting for etcd server; sleep 2; done;']
   containers:
   - name: simuctl
     image: simuctl:v1
-    command:
-      - sleep
-      - "30"
+    command: ["./simuctl"]
     imagePullPolicy: IfNotPresent
-  restartPolicy: Always
+  restartPolicy: OnFailure

@@ -82,12 +82,6 @@ componentSpec:
       labels:
         app: intfmgrsvc
       annotations:
-              mtcil.com/haaas:
-                        '{
-                                "monitoringMode": "hb", 
-                                "mode": "allActive", 
-                                "numStandby": "0"
-                        }'
     us_intfmgrsvc:
       hub: 10.69.12.211:5000
       image: intfmgrsvc

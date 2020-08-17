@@ -30,12 +30,12 @@
                 ]
             },
             {
-                "mServiceName": "iwfsvc",
-                "mAutoScaleOut": false,
-                "mAutoScaleIn": false,
+                "mServiceName": "IWF",
+                "mAutoScaleOut": true,
+                "mAutoScaleIn": true,
                 "mMaxInstances": 10,
-                "mScaleOutRestrictTimer": 60, 
-                "mScaleOutCalmDownTimer": 600,
+                "mScaleOutRestrictTimer": 40, 
+                "mScaleOutCalmDownTimer": 60,
                 "mServiceHeartBeat": 30,
                 "mThreshold": [
                     {
