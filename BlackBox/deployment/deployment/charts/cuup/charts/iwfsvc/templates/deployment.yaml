@@ -1,7 +1,7 @@
 {{- $cnfHdr := (dict "" "") -}} 
 {{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 {{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" "") }}
 spec:
   replicas: {{ .Values.componentSpec.deployment.replicas }}
@@ -124,8 +124,10 @@ spec:
               mountPath: {{ .Values.componentSpec.deployment.us_cim.mount.container_path }}
             - mountPath: /opt/conf/
               name: cim-config
-            - mountPath: /opt/vipconf
+            - mountPath: /opt/vipconf/
               name: mnt-vip-spec
+            - mountPath: /opt/conf/static/
+              name: mnt-common-infra
           resources:
             limits:
               memory: {{ .Values.componentSpec.deployment.us_cim.resources.limits.memory }}
@@ -146,6 +148,12 @@ spec:
         - configMap:
             name: cuup-v1-static-cfg
           name: cuup-config-static
+        - configMap:
+            items:
+              - key: common-infra.json
+                path: common-infra.json
+            name: cuup-v1-static-cfg
+          name: mnt-common-infra
         - configMap:
             items:
               - key: cim.json

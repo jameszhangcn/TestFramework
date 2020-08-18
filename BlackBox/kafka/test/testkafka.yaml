@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testkafka
+  namespace: default
+spec:
+  initContainers:
+          - name: init-nats-server
+            image: busybox:latest
+            command: ['sh', '-c', 'until nslookup myetcd; do echo waiting for etcd server; sleep 2; done;']
+  containers:
+  - name: testkafka
+    image: testkafka:v1
+    command: ["./testkafka"]
+    imagePullPolicy: IfNotPresent
+  restartPolicy: OnFailure

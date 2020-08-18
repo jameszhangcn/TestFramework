@@ -87,12 +87,12 @@ componentSpec:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: "9999"
-        #mtcil.com/haaas:
-        #      '{
-        #              "monitoringMode": "hb",
-        #              "mode": "coldStandby",
-        #              "numStandby": "2"
-        #       }'
+        mtcil.com/haaas:
+              '{
+                      "monitoringMode": "hb",
+                      "mode": "coldStandby",
+                      "numStandby": "2"
+               }'
         mtcil.com/vip-networks: '[{"interface": "net1","poolids":
                 ["vipspec1", "vipspec1", "vipspec2"]},
                 {"interface": "net2","poolids":
@@ -113,7 +113,7 @@ componentSpec:
     us_cim:
       hub: 10.69.12.211:5000
       image: cim
-      tag: v1.7
+      tag: v1.9.3
       lifecycle: 
         type: Sidecar
       app_port: 9999

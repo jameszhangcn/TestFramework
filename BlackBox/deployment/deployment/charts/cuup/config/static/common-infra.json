@@ -1,0 +1,8 @@
+{
+		"logging_svc_url": "fb-service.mvnr-paas.svc.cluster.local:5175",
+		"logging_svc_tcp_port": "5170",
+		"kafka_brokers": [
+			"kafka.kafka.svc.cluster.local:9092"
+		],
+		"etcd_url": "myetcd.default.svc.cluster.local:2379"
+}
