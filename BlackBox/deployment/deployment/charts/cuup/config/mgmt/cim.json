@@ -6,10 +6,8 @@
 			"max_age": 7,
 			"buffer_size": 10000,
 			"flush_timeout": 30,
-			"enable_tcp": false,
-			"daemonset_push": false,
-			"fluentbit_svc_url": "fb-service.mvnr-paas.svc.cluster.local:5175",
-			"fluentbit_tcp_port": "5170"
+			"logging_mode": "FILE",
+			"prefer_local_daemonset": false
 		},
 		"haaas": {
 			"hb_interval": 250,
@@ -18,22 +16,20 @@
 		},
 		"cim_settings": {
 			"enable_kpi": true,
-			"kafka_brokers": [
-				"{{.Values.global.mtcil.kafka_svc_fqdn}}"
-			],
-			"etcd_url": "{{.Values.global.mtcil.etcd_svc_fqdn}}",
 			"http2_enabled": false,
 			"log_level": "ALL",
 			"cim_file_log": true,
-			"num_garp_count": 1 
+			"num_garp_count": 1,
+			"remote_svc_retry_count": 60,
+			"ttl_timeout": 1,
+			"kafka_client_id": "jianzhang"
 		},
 		"app_settings": {
 			"app_port": 9999,
 			"enable_logs": true,
 			"enable_config": true,
 			"enable_event": true,
-			"enable_trl": false,
-			"enable_cdr": false
+			"enable_trl": false
 		}
 	}
 }

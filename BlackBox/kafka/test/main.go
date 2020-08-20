@@ -7,10 +7,13 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
+	"github.com/segmentio/kafka-go"
 )
 
 var brokerIP string
 var brokerPort = ":9092"
+
+const MaxRetryCount = 1000
 
 func WaitKafkaReady() {
 	for {
@@ -55,10 +58,38 @@ func consumer() {
 
 }
 
+func tryKafkaConn() (err error) {
+	dialer := &kafka.Dialer{
+		Timeout:  10 * time.Second,
+		ClientID: "test",
+	}
+	_, err = dialer.Dial("tcp", brokerIP+brokerPort)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func ConnKafka() (err error) {
+	var i int
+	for i = 0; i < MaxRetryCount; i++ {
+		err = tryKafkaConn()
+		if err != nil {
+			fmt.Println("Error while dialing kafka. Retrying...")
+			continue
+		} else {
+			fmt.Println("Kafka dial connection successful")
+			break
+		}
+	}
+	return nil
+}
+
 func main() {
 	config := sarama.NewConfig()
 	fmt.Println("Test kafka: ", config)
 	WaitKafkaReady()
+	ConnKafka()
 
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Partitioner = sarama.NewRandomPartitioner

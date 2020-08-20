@@ -1,0 +1,12 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+ # 鉴于ClusterRole是集群范围对象，所以这里不需要定义"namespace"字段
+ name: topo-gw
+ annotations: 
+              nwFnPrefix: default
+              svcVersion: v1
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]

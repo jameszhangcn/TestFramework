@@ -51,6 +51,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           envFrom:
             - configMapRef:
                 name: iwfsvc-v1-env-cfg
@@ -110,6 +114,10 @@ spec:
           {{- end }}
           imagePullPolicy: Always
           name: us-cim
+          securityContext:
+                  capabilities:
+                          add:
+                                  - NET_ADMIN
           tty: true
           volumeMounts:
             - mountPath: /config/global/
@@ -162,11 +170,9 @@ spec:
           name: cim-config
         - configMap:
             items:
-              - key: vipspec1.json
-                path: vipsepc1.json
-              - key: vipspec2.json
-                path: vipsepc2.json
-            name: cuup-v1-mgmt-cfg
+              - key: vipspec.json
+                path: vipspec.json
+            name: cuup-v1-static-cfg
           name: mnt-vip-spec
         - name: mnt-log
           hostPath:

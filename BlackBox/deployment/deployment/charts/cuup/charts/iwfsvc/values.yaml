@@ -76,7 +76,7 @@ componentSpec:
     type: ClusterIP
 
   deployment:
-    replicas: 3
+    replicas: 1
     pod_metaspec:
       labels:
         name: iwfsvc
@@ -89,15 +89,11 @@ componentSpec:
         prometheus.io/port: "9999"
         mtcil.com/haaas:
               '{
-                      "monitoringMode": "hb",
-                      "mode": "coldStandby",
-                      "numStandby": "2"
+                      "monitoringMode": "k8s",
+                      "mode": "allActive",
+                      "numStandby": "0"
                }'
-        mtcil.com/vip-networks: '[{"interface": "net1","poolids":
-                ["vipspec1", "vipspec1", "vipspec2"]},
-                {"interface": "net2","poolids":
-                ["vipspec1", "vipspec2", "vipspec2"]}
-                ]'
+        mtcil.com/vip-networks: '[{"interface": "net1","poolids":["vipspec"]}]'
     us_iwfsvc:
       hub: 10.69.12.211:5000
       image: iwfsvc
