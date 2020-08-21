@@ -20,7 +20,7 @@ void SctpServer::listenSocket(void)
     serverAddr_.sin_family = AF_INET;
     serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr_.sin_port = htons(SERVER_PORT);
-    inet_pton(AF_INET,"127.0.0.1",&serverAddr_.sin_addr);   
+    inet_pton(AF_INET,"0.0.0.0",&serverAddr_.sin_addr);   
 
     //地址绑定
     bind(sockFd_,(struct sockaddr *)&serverAddr_,sizeof(serverAddr_));

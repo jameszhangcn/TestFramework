@@ -104,6 +104,10 @@ spec:
           {{- end }}
           imagePullPolicy: Always
           name: us-cim
+          securityContext:
+                  capabilities:
+                          add:
+                                  - NET_ADMIN
           tty: true
           volumeMounts:
             - mountPath: /config/global/
@@ -116,6 +120,8 @@ spec:
               mountPath: {{ .Values.componentSpec.deployment.us_cim.mount.container_path }}
             - mountPath: /opt/conf/
               name: cim-config
+            - mountPath: /opt/conf/static/
+              name: mnt-common-infra
           resources:
             limits:
               memory: {{ .Values.componentSpec.deployment.us_cim.resources.limits.memory }}
@@ -133,6 +139,12 @@ spec:
         - configMap:
             name: cuup-v1-mgmt-cfg
           name: cuup-config-global
+        - configMap:
+            items:
+              - key: common-infra.json
+                path: common-infra.json
+            name: cuup-v1-static-cfg
+          name: mnt-common-infra
         - configMap:
             items:
               - key: cim.json

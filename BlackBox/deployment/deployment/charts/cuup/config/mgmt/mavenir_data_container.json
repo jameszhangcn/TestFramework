@@ -31,10 +31,10 @@
           "attributes" : {
             "userLabel" : "",
             "localAddress" : [ {
-              "ipAddress" : "127.0.0.1",
+              "ipAddress" : "172.31.22.53",
               "vlanId" : 7
             } ],
-            "remoteAddress" : "172.31.22.119"
+            "remoteAddress" : "172.31.22.109"
           }
         } ],
         "EP_F1U" : [ {

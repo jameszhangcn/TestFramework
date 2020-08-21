@@ -90,7 +90,7 @@
         },
         "logs": {
           "globalSetting": {
-            "level": "Inf"
+            "level": "Dbg"
           },
           "modules": [
             {

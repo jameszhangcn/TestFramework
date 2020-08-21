@@ -1,7 +1,7 @@
 {{- $cnfHdr := (dict "" "") -}} 
 {{- include "cnfTplHeader_2_8" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 {{- include "cnfTplMetadata_2_8" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" "") }}
 spec:
   replicas: {{ .Values.componentSpec.deployment.replicas }}
@@ -172,7 +172,7 @@ spec:
             items:
               - key: vipspec.json
                 path: vipspec.json
-            name: cuup-v1-static-cfg
+            name: cuup-v1-mgmt-cfg
           name: mnt-vip-spec
         - name: mnt-log
           hostPath:

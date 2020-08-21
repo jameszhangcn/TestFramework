@@ -97,7 +97,7 @@ componentSpec:
     us_cim:
       hub: 10.69.12.211:5000
       image: cim
-      tag: v1.7
+      tag: v1.9.3
       app_port: 9999
       resources:
         requests:

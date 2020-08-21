@@ -1,0 +1,39 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+        name: datadir-mykafka-0
+spec:
+        accessModes:
+                - ReadWriteOnce
+        volumeMode: Filesystem
+        storageClassName: local-storage
+        resources:
+                requests:
+                        storage: 1Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+        name: datadir-mykafka-1
+spec:
+        accessModes:
+                - ReadWriteOnce
+        volumeMode: Filesystem
+        storageClassName: local-storage
+        resources:
+                requests:
+                        storage: 1Gi
+
+---                        
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+        name: datadir-mykafka-2
+spec:
+        accessModes:
+                - ReadWriteOnce
+        volumeMode: Filesystem
+        storageClassName: local-storage
+        resources:
+                requests:
+                        storage: 1Gi
