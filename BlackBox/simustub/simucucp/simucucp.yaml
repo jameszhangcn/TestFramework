@@ -31,4 +31,8 @@ spec:
     #command: ["/bin/sh"]
     #args: ["-c", " sleep 30000"]
     imagePullPolicy: IfNotPresent
+    securityContext:
+            capabilities:
+                add:
+                - NET_ADMIN
   restartPolicy: OnFailure

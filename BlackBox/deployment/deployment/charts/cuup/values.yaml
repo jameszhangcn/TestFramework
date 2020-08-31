@@ -32,7 +32,7 @@ global:
           rangeStart: "172.31.22.53"
           rangeEnd: "172.31.22.153"
           routes_dst: "172.31.22.0/24"
-          gateway: "172.31.22.1"   
+          gateway: "172.31.22.1"
     f1u_sriov: 
       metaspec:
         ext_name: sriov-dpdk-f1

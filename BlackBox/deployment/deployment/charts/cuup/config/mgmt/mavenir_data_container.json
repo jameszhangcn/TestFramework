@@ -34,7 +34,7 @@
               "ipAddress" : "172.31.22.53",
               "vlanId" : 7
             } ],
-            "remoteAddress" : "172.31.22.109"
+            "remoteAddress" : "172.31.22.93"
           }
         } ],
         "EP_F1U" : [ {

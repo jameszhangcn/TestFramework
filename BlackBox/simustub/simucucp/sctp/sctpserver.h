@@ -11,6 +11,8 @@
 #define BUFFER_SIZE 1024
 #define LISTEN_QUEUE 100
 
+#define IPV6_ENABLE true
+
 class SctpServer
 {
     public:
@@ -29,6 +31,8 @@ class SctpServer
         char readBuf_[BUFFER_SIZE];             //接受缓冲区
         struct sockaddr_in clientAddr_;         //用来保存客户端地址
         struct sockaddr_in serverAddr_;         //用来保存服务端地址
+        struct sockaddr_in6 clientAddr6_;         //用来保存客户端地址
+        struct sockaddr_in6 serverAddr6_;         //用来保存服务端地址
         struct sctp_sndrcvinfo sri_;            //消息相关细节信息
         struct sctp_event_subscribe events_;    //事件集
         int streamIncrement_;                   //流号

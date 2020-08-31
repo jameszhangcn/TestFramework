@@ -15,23 +15,43 @@ SctpServer::SctpServer()
 void SctpServer::listenSocket(void)
 {
     //创建SCTP套接字
-    sockFd_ = socket(AF_INET,SOCK_SEQPACKET,IPPROTO_SCTP);
-    bzero(&serverAddr_,sizeof(serverAddr_));
-    serverAddr_.sin_family = AF_INET;
-    serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
-    serverAddr_.sin_port = htons(SERVER_PORT);
-    inet_pton(AF_INET,"0.0.0.0",&serverAddr_.sin_addr);   
+    if (IPV6_ENABLE) {
+        sockFd_ = socket(AF_INET6,SOCK_SEQPACKET,IPPROTO_SCTP);
+        bzero(&serverAddr_,sizeof(serverAddr_));
+        serverAddr_.sin_family = AF_INET6;
+        serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
+        serverAddr_.sin_port = htons(SERVER_PORT);
+        inet_pton(AF_INET6,"0.0.0.0",&serverAddr_.sin_addr);   
 
-    //地址绑定
-    bind(sockFd_,(struct sockaddr *)&serverAddr_,sizeof(serverAddr_));
+        //地址绑定
+        bind(sockFd_,(struct sockaddr *)&serverAddr_,sizeof(serverAddr_));
 
-    //设置SCTP通知事件(此处只设置了I/O通知事件)
-    bzero(&events_,sizeof(events_));
-    events_.sctp_data_io_event = 1;
-    setsockopt(sockFd_,IPPROTO_SCTP,SCTP_EVENTS,&events_,sizeof(events_));
+        //设置SCTP通知事件(此处只设置了I/O通知事件)
+        bzero(&events_,sizeof(events_));
+        events_.sctp_data_io_event = 1;
+        setsockopt(sockFd_,IPPROTO_SCTP,SCTP_EVENTS,&events_,sizeof(events_));
 
-    //开始监听
-    listen(sockFd_,LISTEN_QUEUE);
+        //开始监听
+        listen(sockFd_,LISTEN_QUEUE);
+    } else {
+        sockFd_ = socket(AF_INET6,SOCK_SEQPACKET,IPPROTO_SCTP);
+        bzero(&serverAddr_,sizeof(serverAddr_));
+        serverAddr_.sin_family = AF_INET;
+        serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
+        serverAddr_.sin_port = htons(SERVER_PORT);
+        inet_pton(AF_INET,"0.0.0.0",&serverAddr_.sin_addr);   
+
+        //地址绑定
+        bind(sockFd_,(struct sockaddr *)&serverAddr_,sizeof(serverAddr_));
+
+        //设置SCTP通知事件(此处只设置了I/O通知事件)
+        bzero(&events_,sizeof(events_));
+        events_.sctp_data_io_event = 1;
+        setsockopt(sockFd_,IPPROTO_SCTP,SCTP_EVENTS,&events_,sizeof(events_));
+
+        //开始监听
+        listen(sockFd_,LISTEN_QUEUE);
+    }
 }
 
 void SctpServer::loop(void)
