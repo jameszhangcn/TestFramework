@@ -1,0 +1,8 @@
+/www/mkgo
+git fetch
+git merge origin
+
+
+/www/mkgo-test
+git fetch
+git merge origin

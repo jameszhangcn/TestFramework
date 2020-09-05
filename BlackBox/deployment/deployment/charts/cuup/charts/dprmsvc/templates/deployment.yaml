@@ -114,6 +114,8 @@ spec:
               mountPath: {{ .Values.componentSpec.deployment.us_cim.mount.container_path }}
             - mountPath: /opt/conf/
               name: cim-config
+            - mountPath: /opt/conf/static/
+              name: mnt-common-infra
           resources:
             limits:
               memory: {{ .Values.componentSpec.deployment.us_cim.resources.limits.memory }}
@@ -137,6 +139,12 @@ spec:
                 path: cim.json
             name: cuup-v1-mgmt-cfg
           name: cim-config
+        - configMap:
+            items:
+              - key: common-infra.json
+                path: common-infra.json
+            name: cuup-v1-static-cfg
+          name: mnt-common-infra
         - name: mnt-log
           hostPath:
             path: {{ .Values.componentSpec.deployment.us_cim.mount.host_path }}

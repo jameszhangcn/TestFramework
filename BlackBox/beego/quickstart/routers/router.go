@@ -2,9 +2,14 @@ package routers
 
 import (
 	"quickstart/controllers"
+
 	"github.com/astaxie/beego"
 )
 
 func init() {
-    beego.Router("/", &controllers.MainController{})
+	//add routers
+	beego.Router("/", &controllers.MainController{}, "*:Head")
+	beego.Router("/query", &controllers.MainController{}, "*:JobQuery")
+	beego.Router("/add", &controllers.MainController{}, "*:JobAdd")
+
 }
