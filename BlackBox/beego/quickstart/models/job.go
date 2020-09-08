@@ -15,6 +15,8 @@ var (
 	mypsqlIP string
 )
 
+const testPsqlIP = "10.10.0.50"
+
 type Scope struct {
 	Name string
 }
@@ -53,7 +55,7 @@ func getDBIp() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Err: %s", err.Error())
 			//for local test
-			mypsqlIP = "10.10.0.248"
+			mypsqlIP = testPsqlIP
 			return
 			//end for local test
 		} else {
@@ -79,24 +81,25 @@ func GetJobList() []Job {
 		job := Job{
 			Name: v["name"].(string),
 		}
-		job.ID, err = strconv.ParseInt(v["id"].(string), 10, 64)
+		job.ID, err = strconv.ParseInt(v["i_d"].(string), 10, 64)
 		jobs = append(jobs, job)
 	}
 	return jobs
 }
 
-func AddJob(name string) {
+func AddJob(job Job) (Job, error) {
+	curDate := time.Now().Format("2020-09-04 18:00:00")
 	ormJob.Begin()
 	//...
-	job := Job{
-		Name: name,
-	}
+	job.Name = "test-" + curDate
 	id, err := ormJob.Insert(&job)
 	if err == nil {
 		ormJob.Commit()
+		fmt.Println("commit job id: ", id)
 	} else {
 		ormJob.Rollback()
+		fmt.Println("rollback job id: ", id)
 	}
 	fmt.Println("job id: ", id)
-	return
+	return job, nil
 }

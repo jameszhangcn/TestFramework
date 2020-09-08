@@ -101,7 +101,7 @@ componentSpec:
       env_svc_id: "iwf-svc"
       resources:
         limits:
-          cpu: "250m"
+          cpu: "700m"
           memory: "2000Mi"
         requests:
           cpu: "100m"

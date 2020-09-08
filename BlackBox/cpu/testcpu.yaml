@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testcpu
+  namespace: default
+spec:
+  containers:
+  - name: testcpu
+    image: testcpu:v1
+    command: ["./cputest"]
+    imagePullPolicy: IfNotPresent
+  restartPolicy: OnFailure

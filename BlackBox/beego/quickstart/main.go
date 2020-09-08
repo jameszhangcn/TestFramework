@@ -35,9 +35,9 @@ var FilterUser = func(w http.ResponseWriter, r *http.Request) {
 func main() {
 	orm.Debug = true
 	models.ConnDB()
-	models.AddJob("test-job1")
-	models.AddJob("test-job2")
-	models.AddJob("test-job3")
+	models.AddJob(models.Job{0, "test-job1"})
+	models.AddJob(models.Job{0, "test-job2"})
+	models.AddJob(models.Job{0, "test-job3"})
 	jobs := models.GetJobList()
 	beego.Info("Get jobs: ", jobs)
 	//beego.ValidRouter(FilterUser)
